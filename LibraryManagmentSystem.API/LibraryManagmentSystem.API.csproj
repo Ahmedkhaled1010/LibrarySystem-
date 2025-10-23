@@ -7,11 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.9">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\LibraryManagmentSystem.Application\LibraryManagmentSystem.Application.csproj" />
+    <ProjectReference Include="..\LibraryManagmentSystem.Infrastructure\LibraryManagmentSystem.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -8,7 +8,7 @@ namespace LibraryManagmentSystem.Domain.Entity
         public DateTime? OrderBookDate { get; set; } = DateTime.Now;
         public decimal Price { get; set; }
         [ForeignKey(nameof(Book))]
-        public int BookId { get; set; }
+        public Guid BookId { get; set; }
         public Book Book { get; set; } = default!;
 
 

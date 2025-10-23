@@ -15,7 +15,7 @@ namespace LibraryManagmentSystem.Domain.Entity
         public string? AccessToken { get; set; }
         public int LimitOfBooksCanBorrow { get; set; } = 3;
 
-        public string budget { get; set; } = Budget.FREE.ToString();
+        //  public string budget { get; set; } = Budget.FREE.ToString();
         public double fines { get; set; } = 0.0;
 
         public ICollection<OrderBook> Orders { get; set; } = new List<OrderBook>();
