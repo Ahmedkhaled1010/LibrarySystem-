@@ -1,4 +1,5 @@
 
+using LibraryManagmentSystem.API.Middlewares;
 using LibraryManagmentSystem.Infrastructure;
 
 namespace LibraryManagmentSystem.API
@@ -18,6 +19,7 @@ namespace LibraryManagmentSystem.API
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
+            app.UseMiddleware<CustomExceptionHandlerMiddleware>();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

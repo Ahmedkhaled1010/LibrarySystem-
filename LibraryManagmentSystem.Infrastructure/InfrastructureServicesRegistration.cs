@@ -1,4 +1,8 @@
-﻿using LibraryManagmentSystem.Infrastructure.Data.Context;
+﻿using LibraryManagmentSystem.Domain.Contracts;
+using LibraryManagmentSystem.Domain.Entity;
+using LibraryManagmentSystem.Infrastructure.Data.Context;
+using LibraryManagmentSystem.Infrastructure.Data.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,7 +17,11 @@ namespace LibraryManagmentSystem.Infrastructure
             {
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             });
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+            services.AddIdentityCore<User>()
+              .AddRoles<IdentityRole>()
+              .AddEntityFrameworkStores<LibraryDbContext>();
             return services;
         }
     }

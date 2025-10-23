@@ -1,0 +1,9 @@
+﻿namespace LibraryManagmentSystem.Shared.Error
+{
+    public class ValidationError
+    {
+
+        public string Field { get; set; } = default!;
+        public IEnumerable<string> Errors { get; set; } = [];
+    }
+}
