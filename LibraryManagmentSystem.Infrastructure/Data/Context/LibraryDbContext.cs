@@ -15,7 +15,7 @@ namespace LibraryManagmentSystem.Infrastructure.Data.Context
             builder.ApplyConfigurationsFromAssembly(typeof(AssemblyReference).Assembly);
 
             base.OnModelCreating(builder);
-            builder.Entity<User>().ToTable("users");
+            builder.Entity<IdentityUser>().ToTable("users");
             builder.Entity<IdentityRole>().ToTable("Roles");
             builder.Entity<IdentityUserRole<string>>().ToTable("UserRoles");
             builder.Ignore<IdentityUserClaim<string>>();

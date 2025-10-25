@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibraryManagmentSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    [Migration("20251023121832_Initial Create")]
+    [Migration("20251024130454_Initial Create ")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -162,6 +162,11 @@ namespace LibraryManagmentSystem.Infrastructure.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -212,9 +217,11 @@ namespace LibraryManagmentSystem.Infrastructure.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("users", (string)null);
 
-                    b.UseTptMappingStrategy();
+                    b.HasDiscriminator().HasValue("IdentityUser");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -273,7 +280,7 @@ namespace LibraryManagmentSystem.Infrastructure.Migrations
                     b.Property<string>("verificationToken")
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("users", (string)null);
+                    b.HasDiscriminator().HasValue("User");
                 });
 
             modelBuilder.Entity("LibraryManagmentSystem.Domain.Entity.Book", b =>
@@ -342,12 +349,6 @@ namespace LibraryManagmentSystem.Infrastructure.Migrations
 
             modelBuilder.Entity("LibraryManagmentSystem.Domain.Entity.User", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
-                        .WithOne()
-                        .HasForeignKey("LibraryManagmentSystem.Domain.Entity.User", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.OwnsMany("LibraryManagmentSystem.Domain.Entity.RefreshToken", "RefreshTokens", b1 =>
                         {
                             b1.Property<string>("UserId")

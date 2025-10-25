@@ -1,7 +1,9 @@
-﻿using LibraryManagmentSystem.Domain.Contracts;
+﻿using LibraryManagmentSystem.Application.Interfaces;
+using LibraryManagmentSystem.Domain.Contracts;
 using LibraryManagmentSystem.Domain.Entity;
 using LibraryManagmentSystem.Infrastructure.Data.Context;
 using LibraryManagmentSystem.Infrastructure.Data.Repositories;
+using LibraryManagmentSystem.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -22,6 +24,15 @@ namespace LibraryManagmentSystem.Infrastructure
             services.AddIdentityCore<User>()
               .AddRoles<IdentityRole>()
               .AddEntityFrameworkStores<LibraryDbContext>();
+
+
+
+            services.AddScoped<IServicesManager, ServicesManager>();
+
+            services.AddScoped<IAuthServices, AuthServices>();
+            services.AddScoped<Func<IAuthServices>>(provider => () => provider.GetService<IAuthServices>()!);
+            services.AddScoped<IJwtServices, JwtServices>();
+            services.AddScoped<IUserValidationServices, UserValidationServices>();
             return services;
         }
     }

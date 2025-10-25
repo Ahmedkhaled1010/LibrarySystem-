@@ -1,5 +1,7 @@
 
+using LibraryManagmentSystem.API.Extensions;
 using LibraryManagmentSystem.API.Middlewares;
+using LibraryManagmentSystem.Application;
 using LibraryManagmentSystem.Infrastructure;
 
 namespace LibraryManagmentSystem.API
@@ -16,6 +18,8 @@ namespace LibraryManagmentSystem.API
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddInfrastructureServices(builder.Configuration);
+            builder.Services.AddApplicationRegisteration();
+            builder.Services.AddJWTServices(builder.Configuration);
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
