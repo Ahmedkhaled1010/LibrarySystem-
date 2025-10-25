@@ -33,6 +33,16 @@ namespace LibraryManagmentSystem.Infrastructure
             services.AddScoped<Func<IAuthServices>>(provider => () => provider.GetService<IAuthServices>()!);
             services.AddScoped<IJwtServices, JwtServices>();
             services.AddScoped<IUserValidationServices, UserValidationServices>();
+
+
+
+            services.AddScoped<IEmailClient, EmailClient>();
+            services.AddScoped<Func<IEmailClient>>(provider => () => provider.GetService<IEmailClient>()!);
+            services.AddHttpClient<IEmailClient, EmailClient>(client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:7276/");
+            });
+
             return services;
         }
     }

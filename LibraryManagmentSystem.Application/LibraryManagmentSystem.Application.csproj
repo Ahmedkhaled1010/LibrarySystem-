@@ -12,6 +12,7 @@
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EmailService.Domain\EmailService.Domain.csproj" />
     <ProjectReference Include="..\LibraryManagmentSystem.Domain\LibraryManagmentSystem.Domain.csproj" />
     <ProjectReference Include="..\LibraryManagmentSystem.Shared\LibraryManagmentSystem.Shared.csproj" />
   </ItemGroup>
