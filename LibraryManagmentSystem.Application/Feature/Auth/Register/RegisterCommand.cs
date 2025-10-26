@@ -11,9 +11,9 @@ namespace LibraryManagmentSystem.Application.Feature.Auth.Register
         public string UserName { get; set; } = default!;
 
         public string EmailAddress { get; set; }
+        public string ConfirmEmail { get; set; } = default!;
 
         public string PhoneNumber { get; set; } = default!;
-        public string ConfirmEmail { get; set; } = default!;
 
 
         public string Password { get; set; } = default!;

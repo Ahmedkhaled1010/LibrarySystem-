@@ -40,7 +40,7 @@ namespace LibraryManagmentSystem.Infrastructure
             services.AddScoped<Func<IEmailClient>>(provider => () => provider.GetService<IEmailClient>()!);
             services.AddHttpClient<IEmailClient, EmailClient>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:7276/");
+                client.BaseAddress = new Uri("https://localhost:7102/");
             });
 
             return services;

@@ -3,6 +3,7 @@ using LibraryManagmentSystem.API.Extensions;
 using LibraryManagmentSystem.API.Middlewares;
 using LibraryManagmentSystem.Application;
 using LibraryManagmentSystem.Infrastructure;
+using LibraryManagmentSystem.Shared.Helper;
 
 namespace LibraryManagmentSystem.API
 {
@@ -20,6 +21,8 @@ namespace LibraryManagmentSystem.API
             builder.Services.AddInfrastructureServices(builder.Configuration);
             builder.Services.AddApplicationRegisteration();
             builder.Services.AddJWTServices(builder.Configuration);
+            builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
