@@ -6,4 +6,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Enum\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LibraryManagmentSystem.Domain\LibraryManagmentSystem.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

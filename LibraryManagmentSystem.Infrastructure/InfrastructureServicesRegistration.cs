@@ -33,6 +33,8 @@ namespace LibraryManagmentSystem.Infrastructure
             services.AddScoped<Func<IAuthServices>>(provider => () => provider.GetService<IAuthServices>()!);
             services.AddScoped<IJwtServices, JwtServices>();
             services.AddScoped<IUserValidationServices, UserValidationServices>();
+            services.AddScoped<ICategoryServices, CategoryServices>();
+            services.AddScoped<Func<ICategoryServices>>(provider => () => provider.GetService<ICategoryServices>()!);
 
 
 

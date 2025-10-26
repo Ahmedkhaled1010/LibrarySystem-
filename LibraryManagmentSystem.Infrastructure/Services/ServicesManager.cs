@@ -3,6 +3,7 @@
 namespace LibraryManagmentSystem.Infrastructure.Services
 {
     public class ServicesManager(Func<IAuthServices> IAuth,
+        Func<ICategoryServices> ICategory,
         Func<IEmailClient> IEmail
 
        ) : IServicesManager
@@ -10,7 +11,6 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         public IAuthServices AuthServices => IAuth.Invoke();
         public IEmailClient EmailClient => IEmail.Invoke();
 
-
-
+        public ICategoryServices CategoryServices => ICategory.Invoke();
     }
 }

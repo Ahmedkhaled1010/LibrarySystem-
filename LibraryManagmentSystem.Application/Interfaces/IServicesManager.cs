@@ -3,6 +3,7 @@
     public interface IServicesManager
     {
         public IAuthServices AuthServices { get; }
+        public ICategoryServices CategoryServices { get; }
         public IEmailClient EmailClient { get; }
 
     }

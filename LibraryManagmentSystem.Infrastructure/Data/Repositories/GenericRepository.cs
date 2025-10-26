@@ -1,6 +1,7 @@
 ﻿using LibraryManagmentSystem.Domain.Contracts;
 using LibraryManagmentSystem.Domain.Entity;
 using LibraryManagmentSystem.Infrastructure.Data.Context;
+using LibraryManagmentSystem.Infrastructure.Data.Specifications;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagmentSystem.Infrastructure.Data.Repositories
@@ -19,6 +20,19 @@ namespace LibraryManagmentSystem.Infrastructure.Data.Repositories
 
 
         public void Update(TEntity entity) => libraryDbContext.Set<TEntity>().Update(entity);
+        public async Task<IEnumerable<TEntity>> GetAllAsync(ISpecifications<TEntity, TKey> specifications)
+        {
+            return await SpecificationEvaluator.CreateQuery(libraryDbContext.Set<TEntity>(), specifications).ToListAsync();
+        }
+
+        public async Task<TEntity?> GetByIdAsync(ISpecifications<TEntity, TKey> specifications)
+        {
+            return await SpecificationEvaluator.CreateQuery(libraryDbContext.Set<TEntity>(), specifications).FirstOrDefaultAsync();
+        }
+        public async Task<int> CountAsync(ISpecifications<TEntity, TKey> specifications)
+        {
+            return await SpecificationEvaluator.CreateQuery(libraryDbContext.Set<TEntity>(), specifications).CountAsync();
+        }
 
     }
 }

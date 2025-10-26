@@ -20,7 +20,11 @@ namespace LibraryManagmentSystem.Domain.Entity
         public int BorrowDurationDays { get; set; } = 10;
 
         public long Price { get; set; }
+        [ForeignKey(nameof(Category))]
 
+        public Guid CategoryId { get; set; } = default!;
+
+        public Category Category { get; set; } = default!;
 
         //public Guid? PdfId { get; set; }
         //public Document? Pdf { get; set; }
