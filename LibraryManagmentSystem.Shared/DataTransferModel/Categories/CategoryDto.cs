@@ -1,4 +1,4 @@
-﻿using LibraryManagmentSystem.Domain.Entity;
+﻿using LibraryManagmentSystem.Shared.DataTransferModel.Books;
 
 namespace LibraryManagmentSystem.Shared.DataTransferModel.Category
 {
@@ -7,7 +7,7 @@ namespace LibraryManagmentSystem.Shared.DataTransferModel.Category
 
         public string Name { get; set; }
         public string Description { get; set; }
-        public ICollection<Book> Books { get; set; }
+        public ICollection<BookDto> Books { get; set; }
 
 
     }

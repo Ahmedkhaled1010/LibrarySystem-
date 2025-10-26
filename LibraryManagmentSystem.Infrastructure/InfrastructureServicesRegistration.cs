@@ -35,6 +35,8 @@ namespace LibraryManagmentSystem.Infrastructure
             services.AddScoped<IUserValidationServices, UserValidationServices>();
             services.AddScoped<ICategoryServices, CategoryServices>();
             services.AddScoped<Func<ICategoryServices>>(provider => () => provider.GetService<ICategoryServices>()!);
+            services.AddScoped<IBookServices, BookServices>();
+            services.AddScoped<Func<IBookServices>>(provider => () => provider.GetService<IBookServices>()!);
 
 
 

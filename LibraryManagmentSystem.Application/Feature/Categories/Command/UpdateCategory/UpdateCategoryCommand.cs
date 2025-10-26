@@ -5,9 +5,9 @@ namespace LibraryManagmentSystem.Application.Feature.Categories.Command.UpdateCa
 {
     public class UpdateCategoryCommand : IRequest<ApiResponse<string>>
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public string? Id { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
 
         public UpdateCategoryCommand(string id, string name, string description)
         {

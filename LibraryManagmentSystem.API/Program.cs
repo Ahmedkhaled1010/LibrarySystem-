@@ -32,7 +32,11 @@ namespace LibraryManagmentSystem.API
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(options =>
+                {
+                    options.EnableFilter();
+                    options.EnablePersistAuthorization();
+                });
             }
 
             app.UseHttpsRedirection();
