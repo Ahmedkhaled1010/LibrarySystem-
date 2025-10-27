@@ -20,4 +20,9 @@
     <ProjectReference Include="..\LibraryManagmentSystem.Shared\LibraryManagmentSystem.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\Files\Images\" />
+    <Folder Include="wwwroot\Files\Pdfs\" />
+  </ItemGroup>
+
 </Project>

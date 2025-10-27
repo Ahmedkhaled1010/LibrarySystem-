@@ -2,6 +2,7 @@
 using LibraryManagmentSystem.Domain.Contracts;
 using LibraryManagmentSystem.Domain.Entity;
 using LibraryManagmentSystem.Infrastructure.Data.Context;
+using LibraryManagmentSystem.Infrastructure.Data.MongoContext;
 using LibraryManagmentSystem.Infrastructure.Data.Repositories;
 using LibraryManagmentSystem.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
@@ -24,7 +25,8 @@ namespace LibraryManagmentSystem.Infrastructure
             services.AddIdentityCore<User>()
               .AddRoles<IdentityRole>()
               .AddEntityFrameworkStores<LibraryDbContext>();
-
+            services.AddSingleton<MongoDb>();
+            services.AddSingleton(typeof(IMongoRepository<>), typeof(MongoRepository<>));
 
 
             services.AddScoped<IServicesManager, ServicesManager>();
@@ -37,6 +39,14 @@ namespace LibraryManagmentSystem.Infrastructure
             services.AddScoped<Func<ICategoryServices>>(provider => () => provider.GetService<ICategoryServices>()!);
             services.AddScoped<IBookServices, BookServices>();
             services.AddScoped<Func<IBookServices>>(provider => () => provider.GetService<IBookServices>()!);
+            services.AddScoped<IDocumentServices, DocumentServices>();
+            services.AddScoped<Func<IDocumentServices>>(provider => () => provider.GetService<IDocumentServices>()!);
+            services.AddScoped<IBorrowServices, BorrowServices>();
+            services.AddScoped<Func<IBorrowServices>>(provider => () => provider.GetService<IBorrowServices>()!);
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<Func<IUserService>>(provider => () => provider.GetService<IUserService>()!);
+            services.AddScoped<IBorrowRecordService, BorrowRecordService>();
+            services.AddScoped<Func<IBorrowRecordService>>(provider => () => provider.GetService<IBorrowRecordService>()!);
 
 
 

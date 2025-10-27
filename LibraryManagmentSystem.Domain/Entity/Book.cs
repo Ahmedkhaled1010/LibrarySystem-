@@ -26,10 +26,8 @@ namespace LibraryManagmentSystem.Domain.Entity
 
         public Category Category { get; set; } = default!;
 
-        //public Guid? PdfId { get; set; }
-        //public Document? Pdf { get; set; }
-        //public Guid? CoverImageId { get; set; }
-        //public Document? CoverImage { get; set; }
+        public Guid? PdfId { get; set; }
+        public Guid? CoverImageId { get; set; }
 
         public int TotalSell { get; set; }
         public int TotalBorrow { get; set; }

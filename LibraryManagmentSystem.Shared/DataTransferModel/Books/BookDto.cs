@@ -13,5 +13,7 @@
         public long Price { get; set; }
         public string AuthorId { get; set; } = default!;
         public string AuthorName { get; set; } = default!;
+        public Guid? PdfId { get; set; }
+        public Guid? CoverImageId { get; set; }
     }
 }

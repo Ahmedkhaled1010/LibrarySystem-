@@ -5,7 +5,11 @@ namespace LibraryManagmentSystem.Infrastructure.Services
     public class ServicesManager(Func<IAuthServices> IAuth,
         Func<ICategoryServices> ICategory,
         Func<IBookServices> IBook,
-        Func<IEmailClient> IEmail
+        Func<IDocumentServices> IDocument,
+        Func<IEmailClient> IEmail,
+        Func<IBorrowServices> IBorrow,
+        Func<IUserService> IUser,
+        Func<IBorrowRecordService> IBorrowRecord
 
        ) : IServicesManager
     {
@@ -15,5 +19,13 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         public ICategoryServices CategoryServices => ICategory.Invoke();
 
         public IBookServices BookServices => IBook.Invoke();
+
+        public IDocumentServices documentServices => IDocument.Invoke();
+
+        public IBorrowServices BorrowServices => IBorrow.Invoke();
+
+        public IUserService UserService => IUser.Invoke();
+
+        public IBorrowRecordService borrowRecordService => IBorrowRecord.Invoke();
     }
 }

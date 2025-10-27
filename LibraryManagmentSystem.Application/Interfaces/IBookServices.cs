@@ -3,6 +3,7 @@ using LibraryManagmentSystem.Application.Feature.Books.Command.DeleteBook;
 using LibraryManagmentSystem.Application.Feature.Books.Command.UpdateBook;
 using LibraryManagmentSystem.Application.Feature.Books.Queries.GetAllBook;
 using LibraryManagmentSystem.Application.Feature.Books.Queries.GetBookById;
+using LibraryManagmentSystem.Domain.Entity;
 using LibraryManagmentSystem.Shared.DataTransferModel.Books;
 using LibraryManagmentSystem.Shared.Response;
 
@@ -15,6 +16,11 @@ namespace LibraryManagmentSystem.Application.Interfaces
         Task<ApiResponse<BookDto>> GetBookAsync(GetBookByIdQuery createBookCommand);
         Task<ApiResponse<BookDto>> UpdateBookAsync(UpdateBookCommand bookCommand);
         Task<ApiResponse<string>> DeleteBookAsync(DeleteBookCommand bookId);
+        Task<Book> GetBookAsync(Guid bookId);
+        bool IsAvailable(Book book);
+        void UpdateAvailabilityAsync(Book book, int change);
+        void UpdateTotalBorrow(Book book);
+
 
 
     }

@@ -19,13 +19,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microservices", "Microservi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EmailMicroServices", "EmailMicroServices", "{04546E94-F6F6-4462-98D7-E9EAE6B36DC2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailService", "EmailServices\EmailService.csproj", "{32D6BE52-9329-4F04-AC91-8E628B11CB6D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailService", "EmailServices\EmailService.csproj", "{32D6BE52-9329-4F04-AC91-8E628B11CB6D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailService.Application", "EmailService.Application\EmailService.Application.csproj", "{50B66AAA-4C27-4992-967F-71091BB3DF2B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailService.Application", "EmailService.Application\EmailService.Application.csproj", "{50B66AAA-4C27-4992-967F-71091BB3DF2B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailService.Domain", "EmailService.Domain\EmailService.Domain.csproj", "{EA4AC43A-CCB2-45EE-889B-3F2A75BDAC4E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailService.Domain", "EmailService.Domain\EmailService.Domain.csproj", "{EA4AC43A-CCB2-45EE-889B-3F2A75BDAC4E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailService.Infrastructure", "EmailService.Infrastructure\EmailService.Infrastructure.csproj", "{04A7D8C3-16A0-4E8D-8B8E-056C583F0196}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailService.Infrastructure", "EmailService.Infrastructure\EmailService.Infrastructure.csproj", "{04A7D8C3-16A0-4E8D-8B8E-056C583F0196}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackgroundServices", "BackgroundServices\BackgroundServices.csproj", "{F0525D3F-E77B-4C48-9FD7-02ABCDFA6CCF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +71,10 @@ Global
 		{04A7D8C3-16A0-4E8D-8B8E-056C583F0196}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04A7D8C3-16A0-4E8D-8B8E-056C583F0196}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04A7D8C3-16A0-4E8D-8B8E-056C583F0196}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0525D3F-E77B-4C48-9FD7-02ABCDFA6CCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0525D3F-E77B-4C48-9FD7-02ABCDFA6CCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0525D3F-E77B-4C48-9FD7-02ABCDFA6CCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0525D3F-E77B-4C48-9FD7-02ABCDFA6CCF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
