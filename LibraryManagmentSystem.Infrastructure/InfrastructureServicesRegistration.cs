@@ -62,7 +62,7 @@ namespace LibraryManagmentSystem.Infrastructure
             services.AddScoped<Func<IFineClient>>(provider => () => provider.GetService<IFineClient>()!);
             services.AddHttpClient<IFineClient, FineClient>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:7024/");
+                client.BaseAddress = new Uri("https://localhost:7207/");
             });
 
             return services;
