@@ -1,4 +1,6 @@
-﻿namespace LibraryManagmentSystem.Application.Interfaces
+﻿using LibraryManagmentSystem.Application.IClients;
+
+namespace LibraryManagmentSystem.Application.Interfaces
 {
     public interface IServicesManager
     {
@@ -10,6 +12,7 @@
         public IUserService UserService { get; }
         public IBorrowRecordService borrowRecordService { get; }
         public IEmailClient EmailClient { get; }
+        public IFineClient FineClient { get; }
 
     }
 }

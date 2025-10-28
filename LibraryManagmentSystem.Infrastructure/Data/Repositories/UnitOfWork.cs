@@ -2,6 +2,7 @@
 using LibraryManagmentSystem.Domain.Entity;
 using LibraryManagmentSystem.Infrastructure.Data.Context;
 using LibraryManagmentSystem.Infrastructure.Data.MongoContext;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace LibraryManagmentSystem.Infrastructure.Data.Repositories
 {
@@ -24,6 +25,11 @@ namespace LibraryManagmentSystem.Infrastructure.Data.Repositories
             return CheckRepository<TEntity, TKey>(dbContext, RepoType);
         }
         public IBorrowRepository borrowRepository => new BorrowRepository(dbContext);
+
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            return await dbContext.Database.BeginTransactionAsync();
+        }
 
         public async Task<int> SaveChangesAsync() => await dbContext.SaveChangesAsync();
 
@@ -53,5 +59,7 @@ namespace LibraryManagmentSystem.Infrastructure.Data.Repositories
                 return Repo;
             }
         }
+
+
     }
 }

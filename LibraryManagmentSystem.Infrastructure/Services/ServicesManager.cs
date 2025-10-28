@@ -1,4 +1,5 @@
-﻿using LibraryManagmentSystem.Application.Interfaces;
+﻿using LibraryManagmentSystem.Application.IClients;
+using LibraryManagmentSystem.Application.Interfaces;
 
 namespace LibraryManagmentSystem.Infrastructure.Services
 {
@@ -9,7 +10,8 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         Func<IEmailClient> IEmail,
         Func<IBorrowServices> IBorrow,
         Func<IUserService> IUser,
-        Func<IBorrowRecordService> IBorrowRecord
+        Func<IBorrowRecordService> IBorrowRecord,
+        Func<IFineClient> IFine
 
        ) : IServicesManager
     {
@@ -27,5 +29,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         public IUserService UserService => IUser.Invoke();
 
         public IBorrowRecordService borrowRecordService => IBorrowRecord.Invoke();
+
+        public IFineClient FineClient => IFine.Invoke();
     }
 }

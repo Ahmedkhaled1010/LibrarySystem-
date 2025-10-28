@@ -1,4 +1,5 @@
 ﻿using LibraryManagmentSystem.Domain.Entity;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace LibraryManagmentSystem.Domain.Contracts
 {
@@ -8,6 +9,8 @@ namespace LibraryManagmentSystem.Domain.Contracts
         IMongoRepository<TEntity> GetMongoRepository<TEntity>() where TEntity : BaseMongoEntity;
         IBorrowRepository borrowRepository { get; }
 
+
+        Task<IDbContextTransaction> BeginTransactionAsync();
         Task<int> SaveChangesAsync();
     }
 }

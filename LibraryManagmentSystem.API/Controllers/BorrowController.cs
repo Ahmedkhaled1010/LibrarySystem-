@@ -1,7 +1,9 @@
 ﻿using LibraryManagmentSystem.Application.Feature.Borrow.Command.BorrowBook;
+using LibraryManagmentSystem.Application.Feature.Borrow.Command.ReturnBook;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace LibraryManagmentSystem.API.Controllers
 {
@@ -16,12 +18,23 @@ namespace LibraryManagmentSystem.API.Controllers
             var borrow = new BorrowBookCommand
             {
                 BookId = Guid.Parse(bookId),
-                UserId = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                UserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
             };
             var result = await mediator.Send(borrow);
             return Ok(result);
 
 
+        }
+        [HttpPost("Return/{bookId}")]
+        public async Task<IActionResult> ReturnBook(string bookId)
+        {
+            var returnBook = new ReturnBookCommand
+            {
+                BookId = Guid.Parse(bookId),
+                UserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            };
+            var result = await mediator.Send(returnBook);
+            return Ok(result);
         }
     }
 }

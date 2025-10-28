@@ -1,6 +1,8 @@
-﻿using LibraryManagmentSystem.Application.Interfaces;
+﻿using LibraryManagmentSystem.Application.IClients;
+using LibraryManagmentSystem.Application.Interfaces;
 using LibraryManagmentSystem.Domain.Contracts;
 using LibraryManagmentSystem.Domain.Entity;
+using LibraryManagmentSystem.Infrastructure.Clients;
 using LibraryManagmentSystem.Infrastructure.Data.Context;
 using LibraryManagmentSystem.Infrastructure.Data.MongoContext;
 using LibraryManagmentSystem.Infrastructure.Data.Repositories;
@@ -55,6 +57,12 @@ namespace LibraryManagmentSystem.Infrastructure
             services.AddHttpClient<IEmailClient, EmailClient>(client =>
             {
                 client.BaseAddress = new Uri("https://localhost:7102/");
+            });
+            services.AddScoped<IFineClient, FineClient>();
+            services.AddScoped<Func<IFineClient>>(provider => () => provider.GetService<IFineClient>()!);
+            services.AddHttpClient<IFineClient, FineClient>(client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:7024/");
             });
 
             return services;

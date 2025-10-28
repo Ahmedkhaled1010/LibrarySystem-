@@ -1,8 +1,8 @@
-﻿using LibraryManagmentSystem.Application.Interfaces;
+﻿using LibraryManagmentSystem.Application.IClients;
 using LibraryManagmentSystem.Shared.Model;
 using System.Net.Http.Json;
 
-namespace LibraryManagmentSystem.Infrastructure.Services
+namespace LibraryManagmentSystem.Infrastructure.Clients
 {
     public class EmailClient(HttpClient httpClient) : IEmailClient
     {

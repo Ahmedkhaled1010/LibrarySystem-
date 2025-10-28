@@ -26,5 +26,11 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             var Borrow = await borrowRepository.GetBorrowByMemberAsync(userId, bookId);
             return Borrow;
         }
+
+        public void SetReturnDate(BorrowRecord Borrow)
+        {
+            Borrow.ReturnDate = DateTime.UtcNow;
+            borrowRepository.Update(Borrow);
+        }
     }
 }

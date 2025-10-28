@@ -6,5 +6,6 @@ namespace LibraryManagmentSystem.Application.Interfaces
     {
         Task<BorrowRecord?> GetActiveBorrowAsync(Guid bookId, string userId);
         Task CreateBorrowRecordAsync(Book book, string userId);
+        void SetReturnDate(BorrowRecord Borrow);
     }
 }
