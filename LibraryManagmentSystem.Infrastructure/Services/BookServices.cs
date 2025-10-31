@@ -30,16 +30,24 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             var category = (await categoryRepository.GetAllAsync()).
                 FirstOrDefault(c => c.Name.ToLower() == createBookCommand.CategoryName.ToLower());
             category = await CheckCategory(createBookCommand, category);
-            var book = new Book
-            {
-                Title = createBookCommand.Title,
-                CopiesAvailable = createBookCommand.CopiesAvailable,
-                CategoryId = category.Id,
-                PublishedYear = createBookCommand.PublishedYear,
-                BorrowDurationDays = createBookCommand.BorrowDurationDays,
-                Price = createBookCommand.Price,
-                AuthorId = createBookCommand.AuthorId
-            };
+            //var book = new Book
+            //{
+            //    Title = createBookCommand.Title,
+            //    CopiesAvailable = createBookCommand.CopiesAvailable,
+            //    CategoryId = category.Id,
+            //    PublishedYear = createBookCommand.PublishedYear,
+            //    BorrowDurationDays = createBookCommand.BorrowDurationDays,
+            //    Price = createBookCommand.Price,
+            //    AuthorId = createBookCommand.AuthorId,
+            //    Description = createBookCommand.Description,
+            //    Language = createBookCommand.Language,
+            //    CopiesForSaleAvailable = createBookCommand.CopiesForSaleAvailable,
+
+
+            //};
+            var book = mapper.Map<Book>(createBookCommand);
+            book.CategoryId = category.Id;
+
             try
             {
                 await bookRepository.AddAsync(book);

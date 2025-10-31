@@ -1,5 +1,6 @@
 ﻿using LibraryManagmentSystem.Application.Feature.Auth.Login;
 using LibraryManagmentSystem.Application.Feature.Auth.Register;
+using LibraryManagmentSystem.Application.Feature.Auth.ResetPassword;
 using LibraryManagmentSystem.Shared.DataTransferModel.Auth;
 using LibraryManagmentSystem.Shared.Response;
 
@@ -14,7 +15,7 @@ namespace LibraryManagmentSystem.Application.Interfaces
         Task<ApiResponse<bool>> RevokeTokenAsync(string token);
         Task<ApiResponse<bool>> VerifyEmailAsync(string token);
         Task<ApiResponse<bool>> ForgetPasswordAsync(string token);
-        Task<ApiResponse<bool>> ResetPasswordAsync(string email, string newPassword);
+        Task<ApiResponse<bool>> ResetPasswordAsync(ResetPasswordCommand command);
 
 
     }

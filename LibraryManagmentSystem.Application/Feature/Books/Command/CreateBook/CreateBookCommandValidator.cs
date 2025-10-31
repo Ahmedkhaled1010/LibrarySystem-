@@ -15,6 +15,12 @@ namespace LibraryManagmentSystem.Application.Feature.Books.Command.CreateBook
                 .InclusiveBetween(1400, DateTime.Now.Year).WithMessage($"Published year must be between 1400 and {DateTime.Now.Year}.");
             RuleFor(x => x.BorrowDurationDays).GreaterThan(0).WithMessage("BorrowDurationDays must be greater than zero.");
             RuleFor(x => x.Price).GreaterThan(0).WithMessage("Price must be greater than zero.");
+            RuleFor(x => x.Description).NotEmpty().WithMessage("Description is required.");
+            RuleFor(x => x.Language).NotEmpty().WithMessage("Language is required.");
+            RuleFor(x => x.CopiesForSaleAvailable)
+                .GreaterThanOrEqualTo(0).WithMessage("Copies for sale available cannot be negative.");
+            RuleFor(x => x.Pages)
+                .GreaterThan(0).WithMessage("Pages must be greater than zero.");
 
 
         }

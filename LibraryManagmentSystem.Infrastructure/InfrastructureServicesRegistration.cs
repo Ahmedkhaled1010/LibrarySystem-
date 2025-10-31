@@ -19,9 +19,9 @@ namespace LibraryManagmentSystem.Infrastructure
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<LibraryDbContext>(options =>
-            {
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
-            });
+                {
+                    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+                });
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddIdentityCore<User>()
@@ -51,7 +51,7 @@ namespace LibraryManagmentSystem.Infrastructure
             services.AddScoped<Func<IBorrowRecordService>>(provider => () => provider.GetService<IBorrowRecordService>()!);
 
 
-
+            services.AddScoped<ISupabaseClient, SupabaseClient>();
             services.AddScoped<IEmailClient, EmailClient>();
             services.AddScoped<Func<IEmailClient>>(provider => () => provider.GetService<IEmailClient>()!);
             services.AddHttpClient<IEmailClient, EmailClient>(client =>

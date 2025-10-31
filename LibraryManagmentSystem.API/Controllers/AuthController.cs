@@ -1,5 +1,6 @@
 ﻿using LibraryManagmentSystem.Application.Feature.Auth.Login;
 using LibraryManagmentSystem.Application.Feature.Auth.Register;
+using LibraryManagmentSystem.Application.Feature.Auth.ResetPassword;
 using LibraryManagmentSystem.Application.Interfaces;
 using LibraryManagmentSystem.Shared.Request;
 using MediatR;
@@ -42,9 +43,9 @@ namespace LibraryManagmentSystem.API.Controllers
             return Ok(result);
         }
         [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPassword([FromQuery] string token, [FromBody] ChangePasswordModel newPassword)
+        public async Task<IActionResult> ResetPassword(ResetPasswordCommand resetPasswordCommand)
         {
-            var result = await servicesManager.AuthServices.ResetPasswordAsync(token, newPassword.Password);
+            var result = await mediator.Send(resetPasswordCommand);
             return Ok(result);
         }
         [HttpGet("refresh-token")]

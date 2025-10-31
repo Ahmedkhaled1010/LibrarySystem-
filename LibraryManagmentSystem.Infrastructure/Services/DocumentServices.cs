@@ -1,14 +1,18 @@
 ﻿using LibraryManagmentSystem.Application.Feature.Documents.Commands.UploadDocument;
+using LibraryManagmentSystem.Application.Feature.Documents.Queries.GetDocument;
+using LibraryManagmentSystem.Application.Feature.Documents.Queries.PreviewDocument;
+using LibraryManagmentSystem.Application.IClients;
 using LibraryManagmentSystem.Application.Interfaces;
 using LibraryManagmentSystem.Domain.Contracts;
 using LibraryManagmentSystem.Domain.Entity;
 using LibraryManagmentSystem.Infrastructure.Data.MongoContext;
+using LibraryManagmentSystem.Infrastructure.Data.Specifications.BooksSpecifications;
 using LibraryManagmentSystem.Shared.Response;
 using Microsoft.AspNetCore.Http;
 
 namespace LibraryManagmentSystem.Infrastructure.Services
 {
-    public class DocumentServices(IUnitOfWork unitOfWork, MongoDb mongoDB) : IDocumentServices
+    public class DocumentServices(IUnitOfWork unitOfWork, MongoDb mongoDB, ISupabaseClient supabase) : IDocumentServices
     {
         private readonly IGenericRepository<Book, Guid> bookRepository = unitOfWork.GetRepository<Book, Guid>();
         private readonly IMongoRepository<Document> documentRepository = unitOfWork.GetMongoRepository<Document>();
@@ -16,48 +20,127 @@ namespace LibraryManagmentSystem.Infrastructure.Services
 
         public async Task<ApiResponse<string>> UploadDocumentAsync(UploadDocumentCommand command)
         {
-            using var session = await mongoDB.Database.Client.StartSessionAsync();
-            session.StartTransaction();
-            try
+            var book = await bookRepository.GetByIdAsync(command.bookId);
+            if (book == null || book.AuthorId != command.AuthorId)
             {
-                var book = await bookRepository.GetByIdAsync(command.bookId);
-                if (book == null || book.AuthorId != command.AuthorId)
-                {
-                    return ApiResponse<string>.Fail("Book not found or you are not authorized to upload document for this book");
-                }
-                var fileExtension = Path.GetExtension(command.file.FileName).ToLowerInvariant();
-
-                var FolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Files", command.folderName);
-                var fileName = $"{Guid.NewGuid()}_{command.file.FileName}";
-                var filePath = Path.Combine(FolderPath, fileName);
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    command.file.CopyTo(stream);
-                }
-                var documentId = await CreateDocument(command.file, fileExtension, fileName, filePath);
-                await UpdateBook(command.bookId, command.folderName, documentId);
-                await session.CommitTransactionAsync();
-                return ApiResponse<string>.Ok(fileName, $"Document {command.file.Name} Uploaded Successfuly");
+                return ApiResponse<string>.Fail("Book not found or you are not authorized to upload document for this book");
             }
-            catch (Exception ex)
+            var fileExtension = Path.GetExtension(command.file.FileName).ToLowerInvariant();
+            var fileName = $"{Guid.NewGuid()}_{command.file.FileName}";
+            // رفع الملف على Supabase
+            using var stream = command.file.OpenReadStream();
+            var publicUrl = await supabase.UploadFileAsync("images", fileName, stream);
+
+
+
+            //var FolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Files", command.folderName);
+            //var fileName = $"{Guid.NewGuid()}_{command.file.FileName}";
+            //var filePath = Path.Combine(FolderPath, fileName);
+            //using (var stream = new FileStream(filePath, FileMode.Create))
+            //{
+            //    command.file.CopyTo(stream);
+            //}
+            var documentId = await CreateDocument(command.file, fileExtension, fileName, publicUrl);
+            await UpdateBook(command.bookId, command.folderName, documentId, publicUrl);
+            return ApiResponse<string>.Ok(fileName, $"Document {command.file.Name} Uploaded Successfuly");
+            //using var session = await mongoDB.Database.Client.StartSessionAsync();
+            //session.StartTransaction();
+            //try
+            //{
+            //    var book = await bookRepository.GetByIdAsync(command.bookId);
+            //    if (book == null || book.AuthorId != command.AuthorId)
+            //    {
+            //        return ApiResponse<string>.Fail("Book not found or you are not authorized to upload document for this book");
+            //    }
+            //    var fileExtension = Path.GetExtension(command.file.FileName).ToLowerInvariant();
+            //    var fileName = $"{Guid.NewGuid()}_{command.file.FileName}";
+            //    // رفع الملف على Supabase
+            //    using var stream = command.file.OpenReadStream();
+            //    var publicUrl = await supabase.UploadFileAsync("images", fileName, stream);
+
+
+
+            //    //var FolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Files", command.folderName);
+            //    //var fileName = $"{Guid.NewGuid()}_{command.file.FileName}";
+            //    //var filePath = Path.Combine(FolderPath, fileName);
+            //    //using (var stream = new FileStream(filePath, FileMode.Create))
+            //    //{
+            //    //    command.file.CopyTo(stream);
+            //    //}
+            //    var documentId = await CreateDocument(command.file, fileExtension, fileName, publicUrl);
+            //    await UpdateBook(command.bookId, command.folderName, documentId, publicUrl);
+            //    await session.CommitTransactionAsync();
+            //    return ApiResponse<string>.Ok(fileName, $"Document {command.file.Name} Uploaded Successfuly");
+            //}
+            //catch (Exception ex)
+            //{
+            //    await session.AbortTransactionAsync();
+            //    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Files", command.folderName, command.file.FileName);
+            //    if (File.Exists(filePath))
+            //        File.Delete(filePath);
+
+            //    return ApiResponse<string>.Fail($"Upload failed: {ex.Message}");
+            //}
+
+        }
+        public async Task<ApiResponse<string>> GetDocumentById(GetDocumentQuery query)
+        {
+            var docGuid = Guid.Parse(query.DocumentId);
+            var document = await documentRepository.GetByIdAsync(docGuid);
+            if (document == null)
             {
-                await session.AbortTransactionAsync();
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Files", command.folderName, command.file.FileName);
-                if (File.Exists(filePath))
-                    File.Delete(filePath);
-
-                return ApiResponse<string>.Fail($"Upload failed: {ex.Message}");
+                return ApiResponse<string>.Fail("Document Not Found");
             }
-
+            return ApiResponse<string>.Ok(document.FilePath, "Document Retrieved Successfully");
         }
         public Task<ApiResponse<string>> DeleteDocumentAsync(string fileUrl, string folderName)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ApiResponse<string>> PreviewDocument(int fileId, string type)
+        public async Task<ApiResponse<string>> PreviewDocument(PreviewDocumentQuery documentQuery)
         {
-            throw new NotImplementedException();
+            var spec = new BookSpecifications(documentQuery.DocumentId);
+            var book = await bookRepository.GetByIdAsync(spec);
+            if (book == null)
+            {
+                return ApiResponse<string>.Fail("Book Not Found");
+            }
+            Guid? docId;
+            string extension = "";
+            if (documentQuery.Type == "cover")
+            {
+                docId = book.CoverImageId!;
+
+
+            }
+            else
+            {
+                docId = book.PdfId!;
+                extension = "application/pdf";
+            }
+            if (docId == null)
+            {
+                return ApiResponse<string>.Fail("Document Not Found");
+            }
+            var document = await documentRepository.GetByIdAsync(docId.Value);
+            if (document == null)
+            {
+                return ApiResponse<string>.Fail("Document Not Found");
+            }
+            if (documentQuery.Type == "cover")
+            {
+                extension = CheckExtension(document, extension);
+            }
+            var filePath = document.FilePath;
+            if (!File.Exists(filePath))
+            {
+                return ApiResponse<string>.Fail("File Not Found");
+            }
+            var fileBytes = await File.ReadAllBytesAsync(filePath);
+            var base64String = Convert.ToBase64String(fileBytes);
+            var result = $"data:{extension};base64,{base64String}";
+            return ApiResponse<string>.Ok(result, "Document Preview Generated Successfully");
         }
         private async Task<Guid> CreateDocument(IFormFile file, string extension, string fileName, string filePath)
         {
@@ -72,23 +155,42 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             await unitOfWork.SaveChangesAsync();
             return document.Id;
         }
-        private async Task UpdateBook(Guid bookId, string FolderName, Guid documentId)
+        private async Task UpdateBook(Guid bookId, string FolderName, Guid documentId, string documentUrl)
         {
             var book = await bookRepository.GetByIdAsync(bookId);
             if (FolderName == "Images")
             {
                 book.CoverImageId = documentId;
+                book.CoverImageUrl = documentUrl;
             }
             else
             {
                 book.PdfId = documentId;
+                book.PdfUrl = documentUrl;
             }
 
             bookRepository.Update(book);
             await unitOfWork.SaveChangesAsync();
 
         }
+        private static string CheckExtension(Document? doc, string extension)
+        {
+            switch (doc.FileType)
+            {
+                case ".png":
+                    extension = "image/png";
+                    break;
+                case ".jpg":
+                    extension = "image/jpeg";
+                    break;
+                default:
+                    break;
 
+
+            }
+
+            return extension;
+        }
 
 
     }

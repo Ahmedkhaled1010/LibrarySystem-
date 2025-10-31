@@ -1,4 +1,5 @@
 ﻿using LibraryManagmentSystem.Application.Feature.Documents.Commands.UploadDocument;
+using LibraryManagmentSystem.Application.Feature.Documents.Queries.GetDocument;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -41,6 +42,20 @@ namespace LibraryManagmentSystem.API.Controllers
                 AuthorId = user
             };
             var result = await mediator.Send(command);
+            return Ok(result);
+        }
+        [HttpGet("preview-document")]
+        public async Task<IActionResult> PreviewDocument([FromQuery] GetDocumentQuery documentQuery)
+        {
+
+            var result = await mediator.Send(documentQuery);
+            return Ok(result);
+        }
+        [HttpGet("get-document")]
+        public async Task<IActionResult> GetDocument([FromQuery] GetDocumentQuery documentQuery)
+        {
+
+            var result = await mediator.Send(documentQuery);
             return Ok(result);
         }
     }

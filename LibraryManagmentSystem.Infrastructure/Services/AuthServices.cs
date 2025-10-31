@@ -1,15 +1,17 @@
 ﻿using LibraryManagmentSystem.Application.Feature.Auth.Login;
 using LibraryManagmentSystem.Application.Feature.Auth.Register;
+using LibraryManagmentSystem.Application.Feature.Auth.ResetPassword;
 using LibraryManagmentSystem.Application.IClients;
 using LibraryManagmentSystem.Application.Interfaces;
 using LibraryManagmentSystem.Domain.Entity;
 using LibraryManagmentSystem.Shared.DataTransferModel.Auth;
 using LibraryManagmentSystem.Shared.Helper;
-using LibraryManagmentSystem.Shared.Model;
 using LibraryManagmentSystem.Shared.Response;
+using MassTransit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using SharedEventsServices.Events;
 using System.Security.Cryptography;
 
 namespace LibraryManagmentSystem.Infrastructure.Services
@@ -18,6 +20,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         IUserValidationServices userValidation,
         IJwtServices jwtServices,
         IEmailClient emailClient,
+        IBus bus,
         IOptions<AppSettings> options) : IAuthServices
     {
         private readonly string baseUrl = options.Value.BaseUrl;
@@ -48,14 +51,14 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                 await userManager.UpdateAsync(user);
 
 
-                var Email = new Email()
+
+                var mail = new SendEmailEvent()
                 {
                     To = user.Email,
                     Subject = "Verify your email",
                     Body = $"Please verify your email by clicking on the link: {baseUrl}/api/Auth/verify-email?token={user.verificationToken}"
-
                 };
-                await emailClient.SendEmailAsync(Email);
+                await bus.Publish<SendEmailEvent>(mail);
                 return new ApiResponse<RegisterResponse>()
                 {
                     Success = true,
@@ -130,28 +133,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             };
         }
 
-        public async Task<ApiResponse<bool>> ForgetPasswordAsync(string email)
-        {
-            var user = await userManager.FindByEmailAsync(email);
-            if (user == null)
-            {
-                return ApiResponse<bool>.Fail("User not found");
-            }
-            user.resetPasswordToken = GetToken();
-            user.resetPasswordTokenExpires = DateTime.UtcNow.AddMinutes(30);
 
-            var mail = new Email()
-            {
-                To = user.Email,
-                Body = $"You can reset your password by clicking on the link: {baseUrl}/api/Auth/reset-password?token={user.resetPasswordToken}",
-                Subject = "Reset Password"
-            };
-            //  emailServices.SendEmail(mail);
-            await emailClient.SendEmailAsync(mail);
-            await userManager.UpdateAsync(user);
-
-            return ApiResponse<bool>.Ok(true, "Reset Password Email Sent");
-        }
 
 
         public async Task<ApiResponse<AuthDto>> RefreshTokenAsync(string token)
@@ -188,10 +170,41 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             return ApiResponse<AuthDto>.Ok(userModel, "Refresh Token Successfuly");
         }
 
-
-        public async Task<ApiResponse<bool>> ResetPasswordAsync(string token, string newPassword)
+        public async Task<ApiResponse<bool>> ForgetPasswordAsync(string email)
         {
-            var user = await userManager.Users.SingleOrDefaultAsync(u => u.resetPasswordToken == token && u.resetPasswordTokenExpires > DateTime.UtcNow);
+
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return ApiResponse<bool>.Fail("User not found");
+            }
+            var otpCode = new Random().Next(100000, 999999).ToString();
+
+            user.resetPasswordToken = otpCode;
+            user.resetPasswordTokenExpires = DateTime.UtcNow.AddMinutes(30);
+
+            //var mail = new Email()
+            //{
+            //    To = user.Email,
+            //    Body = $"Your password reset code is: {otpCode}\nThis code will expire in 30 minutes.",
+            //    Subject = "Reset Password Code"
+            //};
+            ////  emailServices.SendEmail(mail);
+            //await emailClient.SendEmailAsync(mail);
+            var mail = new SendEmailEvent()
+            {
+                To = user.Email,
+                Body = $"Your password reset code is: {otpCode}\nThis code will expire in 30 minutes.",
+                Subject = "Reset Password Code"
+            };
+            await bus.Publish<SendEmailEvent>(mail);
+            await userManager.UpdateAsync(user);
+
+            return ApiResponse<bool>.Ok(true, "Reset Password Email Sent");
+        }
+        public async Task<ApiResponse<bool>> ResetPasswordAsync(ResetPasswordCommand command)
+        {
+            var user = await userManager.Users.SingleOrDefaultAsync(u => u.resetPasswordToken == command.Code && u.resetPasswordTokenExpires > DateTime.UtcNow);
             if (user == null)
             {
                 return ApiResponse<bool>.Fail("Invalid or Expired Token");
@@ -205,7 +218,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                 var Errors = result.Errors.Select(e => e.Description).ToList();
                 throw new Exception(string.Join(", ", Errors));
             }
-            var addPassResult = await userManager.AddPasswordAsync(resetUser, newPassword);
+            var addPassResult = await userManager.AddPasswordAsync(resetUser, command.NewPassword);
             if (!addPassResult.Succeeded)
             {
                 var Errors = addPassResult.Errors.Select(e => e.Description).ToList();
@@ -245,8 +258,12 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             var randomNumber = new byte[32];
             using var generator = new RNGCryptoServiceProvider();
             generator.GetBytes(randomNumber);
+            var token = Convert.ToBase64String(randomNumber);
+            token = token.Replace("+", "-")
+                .Replace("/", "_")
+                .Replace("=", "");
 
-            return Convert.ToBase64String(randomNumber);
+            return token;
 
         }
     }

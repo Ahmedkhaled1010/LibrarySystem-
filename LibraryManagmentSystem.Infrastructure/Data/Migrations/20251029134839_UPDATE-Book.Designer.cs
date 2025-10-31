@@ -4,6 +4,7 @@ using LibraryManagmentSystem.Infrastructure.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibraryManagmentSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    partial class LibraryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251029134839_UPDATE-Book")]
+    partial class UPDATEBook
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,9 +50,6 @@ namespace LibraryManagmentSystem.Infrastructure.Migrations
                     b.Property<Guid?>("CoverImageId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("CoverImageUrl")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -61,14 +61,8 @@ namespace LibraryManagmentSystem.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Pages")
-                        .HasColumnType("int");
-
                     b.Property<Guid?>("PdfId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("PdfUrl")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("Price")
                         .HasColumnType("bigint");

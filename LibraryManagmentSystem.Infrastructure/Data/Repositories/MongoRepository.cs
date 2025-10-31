@@ -17,7 +17,8 @@ namespace LibraryManagmentSystem.Infrastructure.Data.Repositories
         }
         public async Task<IEnumerable<TEntity>> GetAllAsync() => await _collection.Find(_ => true).ToListAsync();
         public async Task<TEntity> GetByIdAsync(Guid id) =>
-        await _collection.Find(x => EqualityComparer<Guid>.Default.Equals(x.Id, id)).FirstOrDefaultAsync();
+       await _collection.Find(x => x.Id == id).FirstOrDefaultAsync();
+
 
 
         public async Task AddAsync(TEntity entity) => await _collection.InsertOneAsync(entity);

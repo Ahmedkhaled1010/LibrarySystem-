@@ -7,6 +7,9 @@ namespace LibraryManagmentSystem.Domain.Entity
         public string Title { get; set; } = default!;
         public int PublishedYear { get; set; }
         public int CopiesAvailable { get; set; }
+        public int CopiesForSaleAvailable { get; set; }
+        public bool IsAvailableForSale => CopiesForSaleAvailable > 0;
+
         public bool IsAvailable => CopiesAvailable > 0;
         [ForeignKey(nameof(Author))]
 
@@ -28,9 +31,13 @@ namespace LibraryManagmentSystem.Domain.Entity
 
         public Guid? PdfId { get; set; }
         public Guid? CoverImageId { get; set; }
-
+        public string? PdfUrl { get; set; }
+        public string? CoverImageUrl { get; set; }
+        public string Description { get; set; } = default!;
         public int TotalSell { get; set; }
         public int TotalBorrow { get; set; }
+        public string Language { get; set; } = default!;
+        public int Pages { get; set; }
         ICollection<OrderBook> orders { get; set; }
     }
 }

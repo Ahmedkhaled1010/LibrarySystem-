@@ -13,13 +13,19 @@ namespace LibraryManagmentSystem.Application.Feature.Books.Command.CreateBook
 
 
         public int CopiesAvailable { get; set; } = 1;
+        public string Description { get; set; } = default!;
+        public int CopiesForSaleAvailable { get; set; }
+        public string Language { get; set; } = default!;
 
         public string CategoryName { get; set; } = default!;
         public int PublishedYear { get; set; }
         public int BorrowDurationDays { get; set; } = 10;
         public long Price { get; set; }
+        public int Pages { get; set; }
+
         [JsonIgnore]
         public string AuthorId { get; set; } = "";
+
 
 
     }

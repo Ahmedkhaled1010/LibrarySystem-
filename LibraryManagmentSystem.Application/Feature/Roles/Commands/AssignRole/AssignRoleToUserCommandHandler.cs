@@ -21,6 +21,15 @@ namespace LibraryManagmentSystem.Application.Features.Roles.Commands.AssignRole
 
             }
             var user = await userManager.FindByIdAsync(request.UserId);
+            var currentRoles = await userManager.GetRolesAsync(user);
+            if (currentRoles.Any())
+            {
+                var removeResult = await userManager.RemoveFromRolesAsync(user, currentRoles);
+                if (!removeResult.Succeeded)
+                {
+                    return ApiResponse<string>.Fail("Failed to remove existing roles");
+                }
+            }
             var assignRoleResult = await userManager.AddToRoleAsync(user, request.RoleName);
             if (assignRoleResult.Succeeded)
             {

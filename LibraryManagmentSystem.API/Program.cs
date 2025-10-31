@@ -2,8 +2,10 @@
 using LibraryManagmentSystem.API.Extensions;
 using LibraryManagmentSystem.API.Middlewares;
 using LibraryManagmentSystem.Application;
+using LibraryManagmentSystem.Application.Consumers;
 using LibraryManagmentSystem.Infrastructure;
 using LibraryManagmentSystem.Shared.Helper;
+using MassTransit;
 
 namespace LibraryManagmentSystem.API
 {
@@ -22,7 +24,36 @@ namespace LibraryManagmentSystem.API
             builder.Services.AddApplicationRegisteration();
             builder.Services.AddJWTServices(builder.Configuration);
             builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(name: "AllowALL",
+                    policy =>
+                    {
+                        policy
+                            .WithOrigins("http://localhost:4200")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .AllowCredentials();
+                    });
+            });
+            builder.Services.AddMassTransit(x =>
+            {
+                x.AddConsumer<BorrowBookConsumer>();
 
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.Host("localhost", "/", h =>
+                    {
+                        h.Username("guest");
+                        h.Password("guest");
+                    });
+                    cfg.ReceiveEndpoint("borrow-book-queue", e =>
+                    {
+                        e.ConfigureConsumer<BorrowBookConsumer>(context);
+                    });
+                });
+
+            });
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
@@ -43,6 +74,7 @@ namespace LibraryManagmentSystem.API
 
             app.UseAuthorization();
 
+            app.UseCors("AllowALL");
 
             app.MapControllers();
 

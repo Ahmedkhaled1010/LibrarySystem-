@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using LibraryManagmentSystem.Application.Events;
 using LibraryManagmentSystem.Application.Feature.Borrow.Command.BorrowBook;
 using LibraryManagmentSystem.Application.Feature.Borrow.Command.ReturnBook;
 using LibraryManagmentSystem.Application.Interfaces;
@@ -6,63 +7,91 @@ using LibraryManagmentSystem.Domain.Contracts;
 using LibraryManagmentSystem.Domain.Entity;
 using LibraryManagmentSystem.Shared.Model;
 using LibraryManagmentSystem.Shared.Response;
+using MassTransit;
 using Microsoft.AspNetCore.Identity;
 
 namespace LibraryManagmentSystem.Infrastructure.Services
 {
     public class BorrowServices(IUnitOfWork unitOfWork,
         UserManager<User> userManager,
-        IMapper mapper, IServicesManager servicesManager) : IBorrowServices
+        IMapper mapper, IServicesManager servicesManager,
+        IBus bus) : IBorrowServices
     {
         private readonly IBorrowRepository borrowRepository = unitOfWork.borrowRepository;
 
         public async Task<ApiResponse<string>> BorrowBook(BorrowBookCommand command)
         {
-            using (var transaction = await unitOfWork.BeginTransactionAsync())
+            var user = await userManager.FindByIdAsync(command.UserId);
+            var checkUser = await servicesManager.UserService.ValidateUserForBorrowing(command.UserId);
+            if (checkUser is not null)
             {
-                try
-                {
-
-
-                    var user = await userManager.FindByIdAsync(command.UserId);
-                    var checkUser = await servicesManager.UserService.ValidateUserForBorrowing(command.UserId);
-                    if (checkUser is not null)
-                    {
-                        return checkUser;
-                    }
-                    Book? book = await servicesManager.BookServices.GetBookAsync(command.BookId);
-                    var isAvailable = servicesManager.BookServices.IsAvailable(book);
-                    if (!isAvailable)
-                    {
-                        //Implement a waitlist feature here in the future   
-                        return ApiResponse<string>.Fail($"Book {book.Title} is not available");
-                    }
-                    var borrowRecord = await servicesManager.borrowRecordService.GetActiveBorrowAsync(command.BookId, command.UserId);
-                    if (borrowRecord is not null)
-                    {
-
-                        return ApiResponse<string>.Fail($"You have already borrowed the book {book.Title} and not returned it yet");
-
-                    }
-                    await servicesManager.borrowRecordService.CreateBorrowRecordAsync(book, command.UserId);
-                    servicesManager.BookServices.UpdateAvailabilityAsync(book, -1);
-                    await servicesManager.UserService.UpdateBorrowLimitAsync(user, -1);
-                    servicesManager.BookServices.UpdateTotalBorrow(book);
-                    await unitOfWork.SaveChangesAsync();
-                    await transaction.CommitAsync();
-                    return new ApiResponse<string>
-                    {
-                        Message = $"Book {book.Title} borrowed successfully.",
-                        Data = $"Book {book.Title} .",
-                    };
-
-                }
-                catch (Exception ex)
-                {
-                    await transaction.RollbackAsync();
-                    return ApiResponse<string>.Fail($"An error occurred while borrowing the book: {ex.Message}");
-                }
+                return checkUser;
             }
+            Book? book = await servicesManager.BookServices.GetBookAsync(command.BookId);
+            var isAvailable = servicesManager.BookServices.IsAvailable(book);
+            if (!isAvailable)
+            {
+                return ApiResponse<string>.Fail($"Book {book.Title} is not available");
+            }
+            var borrowEvent = new BookBorrowRequestedEvent
+            {
+                BookId = command.BookId,
+                UserId = command.UserId,
+                BookTitle = book.Title,
+                RequestedAt = DateTime.UtcNow,
+                RequestId = Guid.NewGuid(),
+
+            };
+
+            await bus.Publish<BookBorrowRequestedEvent>(borrowEvent);
+            return ApiResponse<string>.Ok($"Book {book.Title} .", $"Book {book.Title} borrow request submitted successfully.");
+
+
+            //using (var transaction = await unitOfWork.BeginTransactionAsync())
+            //{
+            //    try
+            //    {
+
+
+            //        var user = await userManager.FindByIdAsync(command.UserId);
+            //        var checkUser = await servicesManager.UserService.ValidateUserForBorrowing(command.UserId);
+            //        if (checkUser is not null)
+            //        {
+            //            return checkUser;
+            //        }
+            //        Book? book = await servicesManager.BookServices.GetBookAsync(command.BookId);
+            //        var isAvailable = servicesManager.BookServices.IsAvailable(book);
+            //        if (!isAvailable)
+            //        {
+            //            //Implement a waitlist feature here in the future   
+            //            return ApiResponse<string>.Fail($"Book {book.Title} is not available");
+            //        }
+            //        var borrowRecord = await servicesManager.borrowRecordService.GetActiveBorrowAsync(command.BookId, command.UserId);
+            //        if (borrowRecord is not null)
+            //        {
+
+            //            return ApiResponse<string>.Fail($"You have already borrowed the book {book.Title} and not returned it yet");
+
+            //        }
+            //        await servicesManager.borrowRecordService.CreateBorrowRecordAsync(book, command.UserId);
+            //        servicesManager.BookServices.UpdateAvailabilityAsync(book, -1);
+            //        await servicesManager.UserService.UpdateBorrowLimitAsync(user, -1);
+            //        servicesManager.BookServices.UpdateTotalBorrow(book);
+            //        await unitOfWork.SaveChangesAsync();
+            //        await transaction.CommitAsync();
+            //        return new ApiResponse<string>
+            //        {
+            //            Message = $"Book {book.Title} borrowed successfully.",
+            //            Data = $"Book {book.Title} .",
+            //        };
+
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        await transaction.RollbackAsync();
+            //        return ApiResponse<string>.Fail($"An error occurred while borrowing the book: {ex.Message}");
+            //    }
+            //}
 
 
         }
