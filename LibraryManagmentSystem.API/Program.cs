@@ -2,7 +2,6 @@
 using LibraryManagmentSystem.API.Extensions;
 using LibraryManagmentSystem.API.Middlewares;
 using LibraryManagmentSystem.Application;
-using LibraryManagmentSystem.Application.Consumers;
 using LibraryManagmentSystem.Infrastructure;
 using LibraryManagmentSystem.Shared.Helper;
 using MassTransit;
@@ -38,7 +37,7 @@ namespace LibraryManagmentSystem.API
             });
             builder.Services.AddMassTransit(x =>
             {
-                x.AddConsumer<BorrowBookConsumer>();
+
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
@@ -47,10 +46,7 @@ namespace LibraryManagmentSystem.API
                         h.Username("guest");
                         h.Password("guest");
                     });
-                    cfg.ReceiveEndpoint("borrow-book-queue", e =>
-                    {
-                        e.ConfigureConsumer<BorrowBookConsumer>(context);
-                    });
+
                 });
 
             });

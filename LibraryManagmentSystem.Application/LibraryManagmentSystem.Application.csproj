@@ -23,5 +23,10 @@
   <ItemGroup>
     <Folder Include="Feature\Borrow\Queries\" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="SharedEventsServices">
+      <HintPath>..\..\SharedEventsServices\SharedEventsServices\bin\Debug\net8.0\SharedEventsServices.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 
 </Project>

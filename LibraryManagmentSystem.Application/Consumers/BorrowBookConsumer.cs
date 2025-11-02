@@ -1,5 +1,5 @@
-﻿using LibraryManagmentSystem.Application.Events;
-using MassTransit;
+﻿using MassTransit;
+using SharedEventsServices.Events;
 
 namespace LibraryManagmentSystem.Application.Consumers
 {

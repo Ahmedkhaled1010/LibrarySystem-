@@ -1,7 +1,6 @@
 ﻿using LibraryManagmentSystem.Application.Feature.Auth.Login;
 using LibraryManagmentSystem.Application.Feature.Auth.Register;
 using LibraryManagmentSystem.Application.Feature.Auth.ResetPassword;
-using LibraryManagmentSystem.Application.IClients;
 using LibraryManagmentSystem.Application.Interfaces;
 using LibraryManagmentSystem.Domain.Entity;
 using LibraryManagmentSystem.Shared.DataTransferModel.Auth;
@@ -19,7 +18,6 @@ namespace LibraryManagmentSystem.Infrastructure.Services
     public class AuthServices(UserManager<User> userManager,
         IUserValidationServices userValidation,
         IJwtServices jwtServices,
-        IEmailClient emailClient,
         IBus bus,
         IOptions<AppSettings> options) : IAuthServices
     {

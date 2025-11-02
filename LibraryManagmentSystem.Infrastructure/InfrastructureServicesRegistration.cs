@@ -52,12 +52,7 @@ namespace LibraryManagmentSystem.Infrastructure
 
 
             services.AddScoped<ISupabaseClient, SupabaseClient>();
-            services.AddScoped<IEmailClient, EmailClient>();
-            services.AddScoped<Func<IEmailClient>>(provider => () => provider.GetService<IEmailClient>()!);
-            services.AddHttpClient<IEmailClient, EmailClient>(client =>
-            {
-                client.BaseAddress = new Uri("https://localhost:7155/");
-            });
+
             services.AddScoped<IFineClient, FineClient>();
             services.AddScoped<Func<IFineClient>>(provider => () => provider.GetService<IFineClient>()!);
             services.AddHttpClient<IFineClient, FineClient>(client =>

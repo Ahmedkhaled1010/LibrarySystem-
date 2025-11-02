@@ -15,7 +15,7 @@ namespace LibraryManagmentSystem.Application.Feature.Borrow.Command.BorrowBook
                 var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
                 return ApiResponse<string>.Fail("Validation Failed", errors);
             }
-            var result = await servicesManager.BorrowServices.BorrowBook(request);
+            var result = await servicesManager.BorrowServices.RequestBorrowBook(request);
             return result;
         }
     }

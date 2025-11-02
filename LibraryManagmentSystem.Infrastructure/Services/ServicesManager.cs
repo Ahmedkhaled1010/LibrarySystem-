@@ -7,7 +7,6 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         Func<ICategoryServices> ICategory,
         Func<IBookServices> IBook,
         Func<IDocumentServices> IDocument,
-        Func<IEmailClient> IEmail,
         Func<IBorrowServices> IBorrow,
         Func<IUserService> IUser,
         Func<IBorrowRecordService> IBorrowRecord,
@@ -16,7 +15,6 @@ namespace LibraryManagmentSystem.Infrastructure.Services
        ) : IServicesManager
     {
         public IAuthServices AuthServices => IAuth.Invoke();
-        public IEmailClient EmailClient => IEmail.Invoke();
 
         public ICategoryServices CategoryServices => ICategory.Invoke();
 

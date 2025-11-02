@@ -11,7 +11,7 @@ namespace LibraryManagmentSystem.Application.Interfaces
         public IBorrowServices BorrowServices { get; }
         public IUserService UserService { get; }
         public IBorrowRecordService borrowRecordService { get; }
-        public IEmailClient EmailClient { get; }
+
         public IFineClient FineClient { get; }
 
     }

@@ -1,4 +1,5 @@
 ﻿using LibraryManagmentSystem.Application.Feature.Borrow.Command.BorrowBook;
+using LibraryManagmentSystem.Application.Feature.Borrow.Command.ResponsBorrowBook;
 using LibraryManagmentSystem.Application.Feature.Borrow.Command.ReturnBook;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +13,7 @@ namespace LibraryManagmentSystem.API.Controllers
     [Authorize]
     public class BorrowController(IMediator mediator) : ControllerBase
     {
-        [HttpPost("Borrow/{bookId}")]
+        [HttpPost("request-borrow/{bookId}")]
         public async Task<IActionResult> BorrowBook(string bookId)
         {
             var borrow = new BorrowBookCommand
@@ -36,5 +37,14 @@ namespace LibraryManagmentSystem.API.Controllers
             var result = await mediator.Send(returnBook);
             return Ok(result);
         }
+
+
+        [HttpPost("ResponseBorrow")]
+        public async Task<IActionResult> ResponsBorrowBook([FromBody] ResponsBorrowBookCommand command)
+        {
+            var result = await mediator.Send(command);
+            return Ok(result);
+        }
+
     }
 }
