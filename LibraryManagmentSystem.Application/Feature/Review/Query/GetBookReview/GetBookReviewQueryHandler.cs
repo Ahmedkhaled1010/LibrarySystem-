@@ -3,7 +3,7 @@ using LibraryManagmentSystem.Shared.DataTransferModel.Review;
 using LibraryManagmentSystem.Shared.Response;
 using MediatR;
 
-namespace LibraryManagmentSystem.Application.Feature.Review.Query
+namespace LibraryManagmentSystem.Application.Feature.Review.Query.GetBookReview
 {
     public class GetBookReviewQueryHandler(IServicesManager servicesManager) : IRequestHandler<GetBookReviewQuery, ApiResponse<IReadOnlyList<ReviewDto>>>
     {

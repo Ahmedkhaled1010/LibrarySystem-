@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace LibraryManagmentSystem.Application.Feature.Review.Query
+namespace LibraryManagmentSystem.Application.Feature.Review.Query.GetBookReview
 {
     public class GetBookReviewQueryValidator : AbstractValidator<GetBookReviewQuery>
     {

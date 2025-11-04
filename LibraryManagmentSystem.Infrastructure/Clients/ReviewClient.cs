@@ -1,5 +1,6 @@
 ﻿using LibraryManagmentSystem.Application.Feature.Review.Command.AddReview;
-using LibraryManagmentSystem.Application.Feature.Review.Query;
+using LibraryManagmentSystem.Application.Feature.Review.Query.GetBookAvgRate;
+using LibraryManagmentSystem.Application.Feature.Review.Query.GetBookReview;
 using LibraryManagmentSystem.Application.IClients;
 using LibraryManagmentSystem.Shared.DataTransferModel.Review;
 using LibraryManagmentSystem.Shared.Response;
@@ -27,6 +28,19 @@ namespace LibraryManagmentSystem.Infrastructure.Clients
             await bus.Publish(review);
             return ApiResponse<string>.Ok("Review Add Successfuly", "Reviews");
         }
+
+        public async Task<ApiResponse<double>> AverageBookRate(GetBookAvgRateQuery query)
+        {
+
+            var reviews = await httpClient.GetFromJsonAsync<double>($"https://localhost:7178/api/Review/avgRating?id={query.bookId}");
+            return new ApiResponse<double>
+            {
+                Data = reviews,
+                Success = true,
+                Message = "Average Reviews  successfully"
+            };
+        }
+
         public async Task<ApiResponse<IReadOnlyList<ReviewDto>>> GetBookReview(GetBookReviewQuery book)
         {
             var reviews = await httpClient.GetFromJsonAsync<IReadOnlyList<ReviewDto>>($"https://localhost:7178/api/Review?id={book.bookId}");

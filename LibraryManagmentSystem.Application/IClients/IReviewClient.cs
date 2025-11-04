@@ -1,5 +1,6 @@
 ﻿using LibraryManagmentSystem.Application.Feature.Review.Command.AddReview;
-using LibraryManagmentSystem.Application.Feature.Review.Query;
+using LibraryManagmentSystem.Application.Feature.Review.Query.GetBookAvgRate;
+using LibraryManagmentSystem.Application.Feature.Review.Query.GetBookReview;
 using LibraryManagmentSystem.Shared.DataTransferModel.Review;
 using LibraryManagmentSystem.Shared.Response;
 
@@ -10,5 +11,7 @@ namespace LibraryManagmentSystem.Application.IClients
         Task<ApiResponse<string>> AddReview(AddReviewCommand addReview);
 
         Task<ApiResponse<IReadOnlyList<ReviewDto>>> GetBookReview(GetBookReviewQuery query);
+        Task<ApiResponse<double>> AverageBookRate(GetBookAvgRateQuery query);
+
     }
 }
