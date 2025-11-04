@@ -1,4 +1,6 @@
 ﻿using LibraryManagmentSystem.Application.Feature.Review.Command.AddReview;
+using LibraryManagmentSystem.Application.Feature.Review.Command.DeleteReview;
+using LibraryManagmentSystem.Application.Feature.Review.Command.UpdateReview;
 using LibraryManagmentSystem.Application.Feature.Review.Query.GetBookAvgRate;
 using LibraryManagmentSystem.Application.Feature.Review.Query.GetBookReview;
 using LibraryManagmentSystem.Application.IClients;
@@ -29,6 +31,17 @@ namespace LibraryManagmentSystem.Infrastructure.Clients
             return ApiResponse<string>.Ok("Review Add Successfuly", "Reviews");
         }
 
+        public async Task<ApiResponse<IReadOnlyList<BookRatingAvgDto>>> AverageAllBookRate()
+        {
+            var reviews = await httpClient.GetFromJsonAsync<IReadOnlyList<BookRatingAvgDto>>($"https://localhost:7178/api/Review/avgRatingAll");
+            return new ApiResponse<IReadOnlyList<BookRatingAvgDto>>
+            {
+                Data = reviews,
+                Success = true,
+                Message = "Reviews fetched successfully"
+            };
+        }
+
         public async Task<ApiResponse<double>> AverageBookRate(GetBookAvgRateQuery query)
         {
 
@@ -41,6 +54,7 @@ namespace LibraryManagmentSystem.Infrastructure.Clients
             };
         }
 
+
         public async Task<ApiResponse<IReadOnlyList<ReviewDto>>> GetBookReview(GetBookReviewQuery book)
         {
             var reviews = await httpClient.GetFromJsonAsync<IReadOnlyList<ReviewDto>>($"https://localhost:7178/api/Review?id={book.bookId}");
@@ -50,6 +64,18 @@ namespace LibraryManagmentSystem.Infrastructure.Clients
                 Success = true,
                 Message = "Reviews fetched successfully"
             };
+        }
+        public async Task<ApiResponse<string>> DeleteReview(DeleteReviewCommand addReview)
+        {
+            await httpClient.DeleteAsync($"https://localhost:7178/api/Review/{addReview.id}");
+            return ApiResponse<string>.Ok("Deleted Review  Successfuly", "Reviews");
+
+        }
+
+        public async Task<ApiResponse<string>> UpdateReview(UpdateReviewCommand addReview)
+        {
+            var res = await httpClient.PutAsJsonAsync($"https://localhost:7178/api/Review", addReview);
+            return ApiResponse<string>.Ok("Updated Review  Successfuly", "Reviews");
         }
     }
 }
