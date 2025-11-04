@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using LibraryManagmentSystem.Shared.Enum.Book;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LibraryManagmentSystem.Domain.Entity
 {
@@ -39,5 +40,6 @@ namespace LibraryManagmentSystem.Domain.Entity
         public string Language { get; set; } = default!;
         public int Pages { get; set; }
         ICollection<OrderBook> orders { get; set; }
+        public string Status { get; set; } = BookStatus.Available.ToString();
     }
 }

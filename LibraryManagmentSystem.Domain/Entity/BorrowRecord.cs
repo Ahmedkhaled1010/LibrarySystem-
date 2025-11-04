@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using LibraryManagmentSystem.Domain.Enum.BorrowRecord;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LibraryManagmentSystem.Domain.Entity
 {
@@ -15,6 +16,7 @@ namespace LibraryManagmentSystem.Domain.Entity
         [ForeignKey(nameof(User))]
         public string UserId { get; set; }
         public User User { get; set; } = default!;
+        public string Status { get; set; } = BorrowRecordStatus.active.ToString();
 
         public void SetActualReturnDate(Book book)
         {

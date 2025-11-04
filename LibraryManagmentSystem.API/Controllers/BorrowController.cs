@@ -1,6 +1,7 @@
 ﻿using LibraryManagmentSystem.Application.Feature.Borrow.Command.BorrowBook;
 using LibraryManagmentSystem.Application.Feature.Borrow.Command.ResponsBorrowBook;
 using LibraryManagmentSystem.Application.Feature.Borrow.Command.ReturnBook;
+using LibraryManagmentSystem.Application.Feature.Borrow.Queries.GetAllBorrowByUser;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -43,6 +44,17 @@ namespace LibraryManagmentSystem.API.Controllers
         public async Task<IActionResult> ResponsBorrowBook([FromBody] ResponsBorrowBookCommand command)
         {
             var result = await mediator.Send(command);
+            return Ok(result);
+        }
+        [HttpGet("BorrowingHistory")]
+        public async Task<IActionResult> BorrowingHistory()
+        {
+            var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var query = new GetAllBorrowByUserQuery
+            {
+                UserId = userId
+            };
+            var result = await mediator.Send(query);
             return Ok(result);
         }
 

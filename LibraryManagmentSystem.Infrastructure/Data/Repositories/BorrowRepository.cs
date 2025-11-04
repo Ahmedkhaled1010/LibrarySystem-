@@ -25,6 +25,7 @@ namespace LibraryManagmentSystem.Infrastructure.Data.Repositories
         {
             return await dbContext.borrowRecords
                .Include(b => b.Book).
+               ThenInclude(b => b.Author).
                Include(b => b.User)
                .Where(b => b.UserId == memberId)
                .ToListAsync();

@@ -30,21 +30,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             var category = (await categoryRepository.GetAllAsync()).
                 FirstOrDefault(c => c.Name.ToLower() == createBookCommand.CategoryName.ToLower());
             category = await CheckCategory(createBookCommand, category);
-            //var book = new Book
-            //{
-            //    Title = createBookCommand.Title,
-            //    CopiesAvailable = createBookCommand.CopiesAvailable,
-            //    CategoryId = category.Id,
-            //    PublishedYear = createBookCommand.PublishedYear,
-            //    BorrowDurationDays = createBookCommand.BorrowDurationDays,
-            //    Price = createBookCommand.Price,
-            //    AuthorId = createBookCommand.AuthorId,
-            //    Description = createBookCommand.Description,
-            //    Language = createBookCommand.Language,
-            //    CopiesForSaleAvailable = createBookCommand.CopiesForSaleAvailable,
 
-
-            //};
             var book = mapper.Map<Book>(createBookCommand);
             book.CategoryId = category.Id;
 
@@ -99,7 +85,8 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                 return ApiResponse<BookDto>.Fail("Book not found");
             }
 
-            CheckUpdate(bookCommand, book);
+            await CheckUpdate(bookCommand, book);
+            mapper.Map(bookCommand, book);
             bookRepository.Update(book);
             await unitOfWork.SaveChangesAsync();
             var bookDto = mapper.Map<BookDto>(book);
@@ -136,26 +123,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                     book.Category = category;
                 }
             }
-            if (!string.IsNullOrEmpty(bookCommand.Title))
-            {
-                book.Title = bookCommand.Title;
-            }
-            if (bookCommand.PublishedYear.HasValue)
-            {
-                book.PublishedYear = bookCommand.PublishedYear.Value;
-            }
-            if (bookCommand.CopiesAvailable.HasValue)
-            {
-                book.CopiesAvailable = bookCommand.CopiesAvailable.Value;
-            }
-            if (bookCommand.BorrowDurationDays.HasValue)
-            {
-                book.BorrowDurationDays = bookCommand.BorrowDurationDays.Value;
-            }
-            if (bookCommand.Price.HasValue)
-            {
-                book.Price = bookCommand.Price.Value;
-            }
+
         }
 
         private async Task<Category?> CheckCategory(CreateBookCommand createBookCommand, Category? category)

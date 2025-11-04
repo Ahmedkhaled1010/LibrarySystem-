@@ -25,6 +25,7 @@ namespace LibraryManagmentSystem.Application.Feature.Books.Command.CreateBook
 
         [JsonIgnore]
         public string AuthorId { get; set; } = "";
+        public string Status { get; set; } = "Available";
 
 
 

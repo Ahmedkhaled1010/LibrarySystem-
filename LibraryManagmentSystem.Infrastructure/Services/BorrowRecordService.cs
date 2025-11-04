@@ -1,6 +1,7 @@
 ﻿using LibraryManagmentSystem.Application.Interfaces;
 using LibraryManagmentSystem.Domain.Contracts;
 using LibraryManagmentSystem.Domain.Entity;
+using LibraryManagmentSystem.Domain.Enum.BorrowRecord;
 
 namespace LibraryManagmentSystem.Infrastructure.Services
 {
@@ -30,6 +31,11 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         public void SetReturnDate(BorrowRecord Borrow)
         {
             Borrow.ReturnDate = DateTime.UtcNow;
+            borrowRepository.Update(Borrow);
+        }
+        public void UpdateStatus(BorrowRecord Borrow)
+        {
+            Borrow.Status = BorrowRecordStatus.returned.ToString();
             borrowRepository.Update(Borrow);
         }
     }

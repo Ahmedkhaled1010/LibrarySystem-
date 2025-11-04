@@ -17,5 +17,15 @@ namespace LibraryManagmentSystem.Application.Feature.Books.Command.UpdateBook
         public int? PublishedYear { get; set; }
         public int? BorrowDurationDays { get; set; } = 10;
         public long? Price { get; set; }
+
+
+        public string? Description { get; set; } = default!;
+        public int? CopiesForSaleAvailable { get; set; }
+        public string? Language { get; set; } = default!;
+
+
+        public int? Pages { get; set; }
+
+        public string? Status { get; set; } = "Available";
     }
 }

@@ -21,6 +21,8 @@ namespace LibraryManagmentSystem.Application.Feature.Books.Command.CreateBook
                 .GreaterThanOrEqualTo(0).WithMessage("Copies for sale available cannot be negative.");
             RuleFor(x => x.Pages)
                 .GreaterThan(0).WithMessage("Pages must be greater than zero.");
+            RuleFor(x => x.Status)
+                .NotEmpty().WithMessage("Status is required.");
 
 
         }

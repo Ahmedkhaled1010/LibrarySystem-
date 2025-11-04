@@ -50,7 +50,8 @@ namespace LibraryManagmentSystem.Infrastructure
             services.AddScoped<IBorrowRecordService, BorrowRecordService>();
             services.AddScoped<Func<IBorrowRecordService>>(provider => () => provider.GetService<IBorrowRecordService>()!);
 
-
+            services.AddScoped<IRequestClient, RequestClient>();
+            services.AddScoped<Func<IRequestClient>>(provider => () => provider.GetService<IRequestClient>()!);
             services.AddScoped<ISupabaseClient, SupabaseClient>();
 
             services.AddScoped<IFineClient, FineClient>();

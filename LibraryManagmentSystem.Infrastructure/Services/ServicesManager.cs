@@ -10,7 +10,8 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         Func<IBorrowServices> IBorrow,
         Func<IUserService> IUser,
         Func<IBorrowRecordService> IBorrowRecord,
-        Func<IFineClient> IFine
+        Func<IFineClient> IFine,
+        Func<IRequestClient> IRequest
 
        ) : IServicesManager
     {
@@ -29,5 +30,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         public IBorrowRecordService borrowRecordService => IBorrowRecord.Invoke();
 
         public IFineClient FineClient => IFine.Invoke();
+
+        public IRequestClient requestClient => IRequest.Invoke();
     }
 }

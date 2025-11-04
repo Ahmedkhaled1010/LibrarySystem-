@@ -2,8 +2,8 @@
 {
     public class BaseQueryParams
     {
-        private const int DefaultPageSize = 10;
-        private const int MaxPageSize = 10;
+        private const int DefaultPageSize = 12;
+        private const int MaxPageSize = 20;
         public int pageSize = DefaultPageSize;
         public int pageNumber { get; set; } = 1;
         public int PageSize

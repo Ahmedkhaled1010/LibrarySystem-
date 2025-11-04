@@ -2,9 +2,11 @@
 using LibraryManagmentSystem.Application.Feature.Borrow.Command.BorrowBook;
 using LibraryManagmentSystem.Application.Feature.Borrow.Command.ResponsBorrowBook;
 using LibraryManagmentSystem.Application.Feature.Borrow.Command.ReturnBook;
+using LibraryManagmentSystem.Application.Feature.Borrow.Queries.GetAllBorrowByUser;
 using LibraryManagmentSystem.Application.Interfaces;
 using LibraryManagmentSystem.Domain.Contracts;
 using LibraryManagmentSystem.Domain.Entity;
+using LibraryManagmentSystem.Shared.DataTransferModel.Borrow;
 using LibraryManagmentSystem.Shared.Model;
 using LibraryManagmentSystem.Shared.Response;
 using MassTransit;
@@ -143,11 +145,20 @@ namespace LibraryManagmentSystem.Infrastructure.Services
 
                     }
                     servicesManager.borrowRecordService.SetReturnDate(Borrow);
+                    servicesManager.borrowRecordService.UpdateStatus(Borrow);
+
                     Book? book = await servicesManager.BookServices.GetBookAsync(bookCommand.BookId);
                     servicesManager.BookServices.UpdateAvailabilityAsync(book, 1);
                     await servicesManager.UserService.UpdateBorrowLimitAsync(userId, 1);
                     await unitOfWork.SaveChangesAsync();
+                    var returnEvent = new ReturnBookEvent
+                    {
 
+                        BookTitle = book.Title,
+                        ReturnDate = DateTime.UtcNow,
+                        UserName = userId.UserName
+                    };
+                    await bus.Publish<ReturnBookEvent>(returnEvent);
                     if (overdueDays > 0)
                     {
                         Fine fine = new Fine
@@ -174,6 +185,20 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                     return ApiResponse<string>.Fail($"An error occurred while returning the book: {ex.Message}");
                 }
             }
+
+        }
+
+        public async Task<ApiResponse<IEnumerable<BorrowRecordDto>>> BorrowingHistory(GetAllBorrowByUserQuery user)
+        {
+            var borrowRecords = await borrowRepository.GetBorrowRecordsByMemberAsync(user.UserId);
+            if (borrowRecords is null)
+            {
+                return ApiResponse<IEnumerable<BorrowRecordDto>>.Fail("No borrow records found for this user.");
+
+            }
+            var mappedBorrowRecords = mapper.Map<IEnumerable<BorrowRecordDto>>(borrowRecords);
+            return ApiResponse<IEnumerable<BorrowRecordDto>>.Ok(mappedBorrowRecords, "Borrow records retrieved successfully.");
+
 
         }
     }

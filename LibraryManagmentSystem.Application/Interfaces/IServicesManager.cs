@@ -13,6 +13,7 @@ namespace LibraryManagmentSystem.Application.Interfaces
         public IBorrowRecordService borrowRecordService { get; }
 
         public IFineClient FineClient { get; }
+        public IRequestClient requestClient { get; }
 
     }
 }
