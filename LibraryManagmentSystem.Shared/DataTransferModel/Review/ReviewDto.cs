@@ -1,10 +1,9 @@
-﻿using LibraryManagmentSystem.Shared.Response;
-using MediatR;
-
-namespace LibraryManagmentSystem.Application.Feature.Review.AddReview
+﻿namespace LibraryManagmentSystem.Shared.DataTransferModel.Review
 {
-    public class AddReviewQuery : IRequest<ApiResponse<string>>
+    public class ReviewDto
     {
+        public Guid? Id { get; set; }
+
         public string? Comment { get; set; }
         public string? BookTitle { get; set; }
         public string? UserName { get; set; }

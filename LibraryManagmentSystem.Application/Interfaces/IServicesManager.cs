@@ -14,6 +14,7 @@ namespace LibraryManagmentSystem.Application.Interfaces
 
         public IFineClient FineClient { get; }
         public IRequestClient requestClient { get; }
+        public IReviewClient reviewServices { get; }
 
     }
 }
