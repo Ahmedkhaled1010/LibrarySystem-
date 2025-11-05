@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using LibraryManagmentSystem.Application.Feature.Users.Queries.GetUserById;
 using LibraryManagmentSystem.Application.Interfaces;
 using LibraryManagmentSystem.Domain.Entity;
 using LibraryManagmentSystem.Shared.DataTransferModel.UserDto;
@@ -22,6 +23,18 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                 UserDtos.Add(dto);
             }
             return ApiResponse<IEnumerable<UserDto>>.Ok(UserDtos);
+
+        }
+        public async Task<ApiResponse<UserDto>> GetUserDetailsAsync(GetUserByIdQuery query)
+        {
+            var user = await userManager.FindByIdAsync(query.userId);
+            if (user is null)
+            {
+                return ApiResponse<UserDto>.Fail("User Not Found");
+
+            }
+            var userDto = mapper.Map<UserDto>(user);
+            return ApiResponse<UserDto>.Ok(userDto, "User Details");
 
         }
 
@@ -54,5 +67,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             user.TotalBorrow += 1;
             await userManager.UpdateAsync(user);
         }
+
+
     }
 }
