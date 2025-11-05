@@ -29,58 +29,15 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             var fileName = $"{Guid.NewGuid()}_{command.file.FileName}";
             // رفع الملف على Supabase
             using var stream = command.file.OpenReadStream();
-            var publicUrl = await supabase.UploadFileAsync("images", fileName, stream);
+            var publicUrl = await supabase.UploadFileAsync(command.folderName, fileName, stream);
 
 
 
-            //var FolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Files", command.folderName);
-            //var fileName = $"{Guid.NewGuid()}_{command.file.FileName}";
-            //var filePath = Path.Combine(FolderPath, fileName);
-            //using (var stream = new FileStream(filePath, FileMode.Create))
-            //{
-            //    command.file.CopyTo(stream);
-            //}
+
             var documentId = await CreateDocument(command.file, fileExtension, fileName, publicUrl);
             await UpdateBook(command.bookId, command.folderName, documentId, publicUrl);
             return ApiResponse<string>.Ok(fileName, $"Document {command.file.Name} Uploaded Successfuly");
-            //using var session = await mongoDB.Database.Client.StartSessionAsync();
-            //session.StartTransaction();
-            //try
-            //{
-            //    var book = await bookRepository.GetByIdAsync(command.bookId);
-            //    if (book == null || book.AuthorId != command.AuthorId)
-            //    {
-            //        return ApiResponse<string>.Fail("Book not found or you are not authorized to upload document for this book");
-            //    }
-            //    var fileExtension = Path.GetExtension(command.file.FileName).ToLowerInvariant();
-            //    var fileName = $"{Guid.NewGuid()}_{command.file.FileName}";
-            //    // رفع الملف على Supabase
-            //    using var stream = command.file.OpenReadStream();
-            //    var publicUrl = await supabase.UploadFileAsync("images", fileName, stream);
 
-
-
-            //    //var FolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Files", command.folderName);
-            //    //var fileName = $"{Guid.NewGuid()}_{command.file.FileName}";
-            //    //var filePath = Path.Combine(FolderPath, fileName);
-            //    //using (var stream = new FileStream(filePath, FileMode.Create))
-            //    //{
-            //    //    command.file.CopyTo(stream);
-            //    //}
-            //    var documentId = await CreateDocument(command.file, fileExtension, fileName, publicUrl);
-            //    await UpdateBook(command.bookId, command.folderName, documentId, publicUrl);
-            //    await session.CommitTransactionAsync();
-            //    return ApiResponse<string>.Ok(fileName, $"Document {command.file.Name} Uploaded Successfuly");
-            //}
-            //catch (Exception ex)
-            //{
-            //    await session.AbortTransactionAsync();
-            //    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Files", command.folderName, command.file.FileName);
-            //    if (File.Exists(filePath))
-            //        File.Delete(filePath);
-
-            //    return ApiResponse<string>.Fail($"Upload failed: {ex.Message}");
-            //}
 
         }
         public async Task<ApiResponse<string>> GetDocumentById(GetDocumentQuery query)
@@ -158,7 +115,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         private async Task UpdateBook(Guid bookId, string FolderName, Guid documentId, string documentUrl)
         {
             var book = await bookRepository.GetByIdAsync(bookId);
-            if (FolderName == "Images")
+            if (FolderName == "images")
             {
                 book.CoverImageId = documentId;
                 book.CoverImageUrl = documentUrl;

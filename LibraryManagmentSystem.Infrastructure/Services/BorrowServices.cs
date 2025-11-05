@@ -107,6 +107,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                     servicesManager.BookServices.UpdateAvailabilityAsync(book, -1);
                     await servicesManager.UserService.UpdateBorrowLimitAsync(user, -1);
                     servicesManager.BookServices.UpdateTotalBorrow(book);
+                    await servicesManager.UserService.UpdateTotalBorrowAsync(user);
                     await unitOfWork.SaveChangesAsync();
                     await transaction.CommitAsync();
                     return new ApiResponse<string>

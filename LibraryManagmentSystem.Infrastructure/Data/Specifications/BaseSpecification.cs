@@ -27,7 +27,7 @@ namespace LibraryManagmentSystem.Infrastructure.Data.Specifications
 
 
         protected void AddOrderBy(Expression<Func<TEntity, object>> orderByExp) => OrderBy = orderByExp;
-        protected void AddOrderByDescending(Expression<Func<TEntity, object>> orderByDescExp) => OrderBy = orderByDescExp;
+        protected void AddOrderByDescending(Expression<Func<TEntity, object>> orderByDescExp) => OrderByDescending = orderByDescExp;
         #endregion
 
         #region Pagination

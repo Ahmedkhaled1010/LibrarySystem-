@@ -1,12 +1,30 @@
-﻿using LibraryManagmentSystem.Application.Interfaces;
+﻿using AutoMapper;
+using LibraryManagmentSystem.Application.Interfaces;
 using LibraryManagmentSystem.Domain.Entity;
+using LibraryManagmentSystem.Shared.DataTransferModel.UserDto;
 using LibraryManagmentSystem.Shared.Response;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagmentSystem.Infrastructure.Services
 {
-    public class UserService(UserManager<User> userManager) : IUserService
+    public class UserService(UserManager<User> userManager, IMapper mapper) : IUserService
     {
+        public async Task<ApiResponse<IEnumerable<UserDto>>> GetAllUser()
+        {
+            var users = await userManager.Users.ToListAsync();
+            var UserDtos = new List<UserDto>();
+            foreach (var user in users)
+            {
+                var role = await userManager.GetRolesAsync(user);
+                var dto = mapper.Map<UserDto>(user);
+                dto.Role = role.FirstOrDefault();
+                UserDtos.Add(dto);
+            }
+            return ApiResponse<IEnumerable<UserDto>>.Ok(UserDtos);
+
+        }
+
         public async Task UpdateBorrowLimitAsync(User user, int change)
         {
             user.LimitOfBooksCanBorrow += change;
@@ -30,6 +48,11 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                 return ApiResponse<string>.Fail("You have exceeded your allowed limit, upgrade your Budget");
             }
             return null;
+        }
+        public async Task UpdateTotalBorrowAsync(User user)
+        {
+            user.TotalBorrow += 1;
+            await userManager.UpdateAsync(user);
         }
     }
 }

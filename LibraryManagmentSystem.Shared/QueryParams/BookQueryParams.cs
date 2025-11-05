@@ -6,12 +6,13 @@ namespace LibraryManagmentSystem.Shared.QueryParams
     {
         public string? Title { get; set; } = default!;
         public int? PublishedYear { get; set; }
-        public string? AuthorId { get; set; } = default!;
+        public string? AuthorName { get; set; } = default!;
         public bool? IsAvailable { get; set; } = false;
         public string? CategoryName { get; set; } = default!;
         public int? MinPrice { get; set; }
         public int? MaxPrice { get; set; }
         public int? Price { get; set; }
         public BookSortingOptions? BookSortingOptions { get; set; }
+
     }
 }

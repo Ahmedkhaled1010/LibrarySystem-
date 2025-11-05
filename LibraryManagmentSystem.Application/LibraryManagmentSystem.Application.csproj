@@ -25,5 +25,8 @@
       <HintPath>..\..\SharedEventsServices\SharedEventsServices\bin\Debug\net8.0\SharedEventsServices.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Feature\Users\Command\" />
+  </ItemGroup>
 
 </Project>

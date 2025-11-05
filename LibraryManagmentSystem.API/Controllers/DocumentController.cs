@@ -20,7 +20,7 @@ namespace LibraryManagmentSystem.API.Controllers
             var command = new UploadDocumentCommand
             {
                 file = file,
-                folderName = "Images",
+                folderName = "images",
                 bookId = bookId,
                 AuthorId = user
             };
@@ -37,7 +37,7 @@ namespace LibraryManagmentSystem.API.Controllers
             var command = new UploadDocumentCommand
             {
                 file = file,
-                folderName = "Images",
+                folderName = "Pdfs",
                 bookId = bookId,
                 AuthorId = user
             };

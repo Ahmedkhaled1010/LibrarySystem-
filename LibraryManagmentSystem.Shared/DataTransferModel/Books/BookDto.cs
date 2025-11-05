@@ -21,6 +21,8 @@
         public string? CoverImageUrl { get; set; }
         public int Pages { get; set; }
         public string? Status { get; set; }
+        public int TotalSell { get; set; }
+        public int TotalBorrow { get; set; }
 
 
     }
