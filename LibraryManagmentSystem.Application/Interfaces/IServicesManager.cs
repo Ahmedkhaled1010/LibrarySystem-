@@ -11,10 +11,11 @@ namespace LibraryManagmentSystem.Application.Interfaces
         public IBorrowServices BorrowServices { get; }
         public IUserService UserService { get; }
         public IBorrowRecordService borrowRecordService { get; }
-
+        public IReservationServices ReservationServices { get; }
         public IFineClient FineClient { get; }
         public IRequestClient requestClient { get; }
         public IReviewClient reviewServices { get; }
+        public INotificationClient notificationClient { get; }
 
     }
 }

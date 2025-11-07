@@ -12,7 +12,9 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         Func<IBorrowRecordService> IBorrowRecord,
         Func<IFineClient> IFine,
         Func<IRequestClient> IRequest,
-        Func<IReviewClient> IReview
+        Func<IReviewClient> IReview,
+        Func<INotificationClient> INotify,
+        Func<IReservationServices> IReserve
 
        ) : IServicesManager
     {
@@ -35,5 +37,9 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         public IRequestClient requestClient => IRequest.Invoke();
 
         public IReviewClient reviewServices => IReview.Invoke();
+
+        public INotificationClient notificationClient => INotify.Invoke();
+
+        public IReservationServices ReservationServices => IReserve.Invoke();
     }
 }

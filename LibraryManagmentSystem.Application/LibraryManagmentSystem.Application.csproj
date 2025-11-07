@@ -25,5 +25,9 @@
       <HintPath>..\..\SharedEventsServices\SharedEventsServices\bin\Debug\net8.0\SharedEventsServices.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Feature\Notification\Command\" />
+    <Folder Include="Feature\Notification\Query\GetAllNotificationAdmin\" />
+  </ItemGroup>
 
 </Project>
