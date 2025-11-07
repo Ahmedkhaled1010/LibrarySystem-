@@ -11,5 +11,7 @@
         public int TotalBorrow { get; set; }
         public decimal invoice { get; set; }
         public string Role { get; set; }
+        public string? ImagePath { get; set; }
+
     }
 }

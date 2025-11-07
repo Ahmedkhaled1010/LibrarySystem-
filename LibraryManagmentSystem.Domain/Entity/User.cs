@@ -27,5 +27,6 @@ namespace LibraryManagmentSystem.Domain.Entity
         public string? verificationToken { get; set; }
         public string? resetPasswordToken { get; set; }
         public DateTime? resetPasswordTokenExpires { get; set; }
+        public string? ImagePath { get; set; }
     }
 }

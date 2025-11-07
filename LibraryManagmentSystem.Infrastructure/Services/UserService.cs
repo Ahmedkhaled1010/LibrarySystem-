@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using LibraryManagmentSystem.Application.Feature.Users.Command.ChangePassword;
 using LibraryManagmentSystem.Application.Feature.Users.Command.NewFolder;
+using LibraryManagmentSystem.Application.Feature.Users.Command.UploadProfileImage;
 using LibraryManagmentSystem.Application.Feature.Users.Queries.GetUserById;
+using LibraryManagmentSystem.Application.IClients;
 using LibraryManagmentSystem.Application.Interfaces;
 using LibraryManagmentSystem.Domain.Entity;
 using LibraryManagmentSystem.Shared.DataTransferModel.UserDto;
@@ -11,7 +13,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagmentSystem.Infrastructure.Services
 {
-    public class UserService(UserManager<User> userManager, IMapper mapper) : IUserService
+    public class UserService(UserManager<User> userManager, IMapper mapper,
+         ISupabaseClient supabase) : IUserService
     {
         public async Task<ApiResponse<IEnumerable<UserDto>>> GetAllUser()
         {
@@ -97,6 +100,22 @@ namespace LibraryManagmentSystem.Infrastructure.Services
 
             return ApiResponse<string>.Ok("Password changed successfully");
 
+
+        }
+        public async Task<ApiResponse<string>> UploadProfileIamge(UploadProfileImageCommand command)
+        {
+            var user = await userManager.FindByIdAsync(command.UserId);
+            if (user is null)
+            {
+                return ApiResponse<string>.Fail("User Not Found");
+            }
+            var fileExtension = Path.GetExtension(command.file.FileName).ToLowerInvariant();
+            var fileName = $"{Guid.NewGuid()}_{command.file.FileName}";
+            using var stream = command.file.OpenReadStream();
+            var publicUrl = await supabase.UploadFileAsync("Profile", fileName, stream);
+            user.ImagePath = publicUrl;
+            await userManager.UpdateAsync(user);
+            return ApiResponse<string>.Ok("Uploade Profile Image Successfuly");
 
         }
         private static void UpdateUser(UpdateUserCommand query, User? user)

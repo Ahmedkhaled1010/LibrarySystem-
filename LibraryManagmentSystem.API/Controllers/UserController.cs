@@ -1,4 +1,6 @@
-﻿using LibraryManagmentSystem.Application.Feature.Users.Command.NewFolder;
+﻿using LibraryManagmentSystem.Application.Feature.Users.Command.ChangePassword;
+using LibraryManagmentSystem.Application.Feature.Users.Command.NewFolder;
+using LibraryManagmentSystem.Application.Feature.Users.Command.UploadProfileImage;
 using LibraryManagmentSystem.Application.Feature.Users.Queries.GetAllUser;
 using LibraryManagmentSystem.Application.Feature.Users.Queries.GetUserById;
 using MediatR;
@@ -10,6 +12,7 @@ namespace LibraryManagmentSystem.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UserController(IMediator mediator) : ControllerBase
     {
         [HttpGet]
@@ -28,7 +31,7 @@ namespace LibraryManagmentSystem.API.Controllers
             return Ok(res);
         }
         [HttpPut]
-        [Authorize]
+
         public async Task<IActionResult> UpdatUser(UpdateUserCommand command)
 
         {
@@ -37,6 +40,31 @@ namespace LibraryManagmentSystem.API.Controllers
 
             var res = await mediator.Send(command);
             return Ok(res);
+        }
+        [HttpPut("chanege-password")]
+
+        public async Task<IActionResult> ChangePassword(ChangePasswordCommand command)
+
+        {
+            var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            command.UserId = user;
+
+            var res = await mediator.Send(command);
+            return Ok(res);
+        }
+        [HttpPost("uploaf-profile-image")]
+        public async Task<IActionResult> Uploadmage([FromForm] IFormFile file)
+        {
+            var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var command = new UploadProfileImageCommand
+            {
+                file = file,
+                UserId = user
+
+            };
+            var result = await mediator.Send(command);
+            return Ok(result);
         }
 
     }
