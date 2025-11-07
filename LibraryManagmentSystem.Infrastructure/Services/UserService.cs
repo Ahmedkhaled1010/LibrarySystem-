@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using LibraryManagmentSystem.Application.Feature.Users.Command.ChangePassword;
+using LibraryManagmentSystem.Application.Feature.Users.Command.NewFolder;
 using LibraryManagmentSystem.Application.Feature.Users.Queries.GetUserById;
 using LibraryManagmentSystem.Application.Interfaces;
 using LibraryManagmentSystem.Domain.Entity;
@@ -66,6 +68,49 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         {
             user.TotalBorrow += 1;
             await userManager.UpdateAsync(user);
+        }
+
+        public async Task<ApiResponse<UserDto>> UpdateUserDetailsAsync(UpdateUserCommand query)
+        {
+            var user = await userManager.FindByIdAsync(query.UserId);
+            if (user is null)
+            {
+                return ApiResponse<UserDto>.Fail("User Not Found");
+            }
+            UpdateUser(query, user);
+            await userManager.UpdateAsync(user);
+            var userDto = mapper.Map<UserDto>(user);
+            return ApiResponse<UserDto>.Ok(userDto, "User Updated Successfuly");
+
+        }
+        public async Task<ApiResponse<string>> ChangePasswordAsync(ChangePasswordCommand command)
+        {
+            var user = await userManager.FindByIdAsync(command.UserId);
+            if (user is null)
+            {
+                return ApiResponse<string>.Fail("User Not Found");
+            }
+            var result = await userManager.ChangePasswordAsync(user, command.CurrentPassword, command.NewPassword);
+
+            if (!result.Succeeded)
+                return ApiResponse<string>.Fail("Change Password failed", result.Errors.Select(x => x.Description).ToList());
+
+            return ApiResponse<string>.Ok("Password changed successfully");
+
+
+        }
+        private static void UpdateUser(UpdateUserCommand query, User? user)
+        {
+            if (query.Name is not null)
+            {
+                user.Name = query.Name;
+
+            }
+            if (query.PhoneNumber is not null)
+            {
+                user.PhoneNumber = query.PhoneNumber;
+
+            }
         }
 
 
