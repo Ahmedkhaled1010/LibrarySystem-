@@ -1,7 +1,10 @@
-﻿namespace LibraryManagmentSystem.Application.Interfaces
+﻿using LibraryManagmentSystem.Shared.DataTransferModel.Reservations;
+
+namespace LibraryManagmentSystem.Application.Interfaces
 {
     public interface IReservationServices
     {
-        void CreateReservation(string user, Guid book);
+        Task CreateReservation(string user, Guid book);
+        Task<IEnumerable<ReservationDto>> GetAllReservationAsync();
     }
 }

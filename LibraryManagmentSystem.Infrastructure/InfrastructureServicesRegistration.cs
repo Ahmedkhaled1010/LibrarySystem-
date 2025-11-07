@@ -49,8 +49,8 @@ namespace LibraryManagmentSystem.Infrastructure
             services.AddScoped<Func<IUserService>>(provider => () => provider.GetService<IUserService>()!);
             services.AddScoped<IBorrowRecordService, BorrowRecordService>();
             services.AddScoped<Func<IBorrowRecordService>>(provider => () => provider.GetService<IBorrowRecordService>()!);
-
-            services.AddScoped<IReviewClient, ReviewClient>();
+            services.AddScoped<IReservationServices, ReservationServices>();
+            services.AddScoped<Func<IReservationServices>>(provider => () => provider.GetService<IReservationServices>()!); services.AddScoped<IReviewClient, ReviewClient>();
             services.AddScoped<Func<IReviewClient>>(provider => () => provider.GetService<IReviewClient>()!);
 
             services.AddScoped<IRequestClient, RequestClient>();

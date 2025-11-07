@@ -28,5 +28,7 @@ namespace LibraryManagmentSystem.Domain.Entity
         public string? resetPasswordToken { get; set; }
         public DateTime? resetPasswordTokenExpires { get; set; }
         public string? ImagePath { get; set; }
+
+        public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
     }
 }

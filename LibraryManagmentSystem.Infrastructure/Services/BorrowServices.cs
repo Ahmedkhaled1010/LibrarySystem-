@@ -35,6 +35,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             var isAvailable = servicesManager.BookServices.IsAvailable(book);
             if (!isAvailable)
             {
+                await servicesManager.ReservationServices.CreateReservation(user.Id, book.Id);
                 return ApiResponse<string>.Fail($"Book {book.Title} is not available");
             }
             var borrowEvent = new BookBorrowRequestedEvent

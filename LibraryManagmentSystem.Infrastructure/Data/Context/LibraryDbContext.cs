@@ -26,6 +26,7 @@ namespace LibraryManagmentSystem.Infrastructure.Data.Context
         public DbSet<Book> books { get; set; }
         public DbSet<BorrowRecord> borrowRecords { get; set; }
         public DbSet<OrderBook> orderBooks { get; set; }
+        public DbSet<Reservation> reservations { get; set; }
 
     }
 }
