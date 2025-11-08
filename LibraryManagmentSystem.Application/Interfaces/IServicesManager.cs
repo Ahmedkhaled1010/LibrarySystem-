@@ -1,4 +1,5 @@
 ﻿using LibraryManagmentSystem.Application.IClients;
+using LibraryManagmentSystem.Domain.Contracts;
 
 namespace LibraryManagmentSystem.Application.Interfaces
 {
@@ -17,6 +18,7 @@ namespace LibraryManagmentSystem.Application.Interfaces
         public IReviewClient reviewServices { get; }
         public INotificationClient notificationClient { get; }
         public ICasheServices casheServices { get; }
+        public IBasketServices basketServices { get; }
 
     }
 }

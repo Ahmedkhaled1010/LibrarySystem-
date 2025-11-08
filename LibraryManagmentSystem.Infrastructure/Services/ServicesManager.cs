@@ -1,5 +1,6 @@
 ﻿using LibraryManagmentSystem.Application.IClients;
 using LibraryManagmentSystem.Application.Interfaces;
+using LibraryManagmentSystem.Domain.Contracts;
 
 namespace LibraryManagmentSystem.Infrastructure.Services
 {
@@ -15,7 +16,8 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         Func<IReviewClient> IReview,
         Func<INotificationClient> INotify,
         Func<IReservationServices> IReserve,
-        Func<ICasheServices> ICashe
+        Func<ICasheServices> ICashe,
+        Func<IBasketServices> IBasket
 
        ) : IServicesManager
     {
@@ -44,5 +46,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         public IReservationServices ReservationServices => IReserve.Invoke();
 
         public ICasheServices casheServices => ICashe.Invoke();
+
+        public IBasketServices basketServices => IBasket.Invoke();
     }
 }

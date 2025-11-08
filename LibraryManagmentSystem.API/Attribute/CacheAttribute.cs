@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LibraryManagmentSystem.API.Attribute
 {
-    class CacheAttribute(int DurationInSecond = 90) : ActionFilterAttribute
+    class CacheAttribute(int DurationInSecond = 20) : ActionFilterAttribute
     {
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {

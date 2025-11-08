@@ -15,7 +15,6 @@ namespace LibraryManagmentSystem.API.Controllers
     public class CategoryController(IMediator mediator) : ControllerBase
     {
         [HttpGet]
-        [Cache]
         public async Task<IActionResult> GetAllCategories([FromQuery] CategoryQueryParams categoryQueryParams)
         {
             var result = await mediator.Send(new GetAllCategoriesQuery(categoryQueryParams));
