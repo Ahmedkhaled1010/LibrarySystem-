@@ -1,4 +1,5 @@
-﻿using LibraryManagmentSystem.Application.Feature.Categories.Command.CreateCategory;
+﻿using LibraryManagmentSystem.API.Attribute;
+using LibraryManagmentSystem.Application.Feature.Categories.Command.CreateCategory;
 using LibraryManagmentSystem.Application.Feature.Categories.Command.DeleteCategory;
 using LibraryManagmentSystem.Application.Feature.Categories.Command.UpdateCategory;
 using LibraryManagmentSystem.Application.Feature.Categories.Queries.GetAllCategories;
@@ -14,12 +15,15 @@ namespace LibraryManagmentSystem.API.Controllers
     public class CategoryController(IMediator mediator) : ControllerBase
     {
         [HttpGet]
+        [Cache]
         public async Task<IActionResult> GetAllCategories([FromQuery] CategoryQueryParams categoryQueryParams)
         {
             var result = await mediator.Send(new GetAllCategoriesQuery(categoryQueryParams));
             return Ok(result);
         }
         [HttpGet("{id}")]
+        [Cache]
+
         public async Task<IActionResult> GetCategoryById(string id)
         {
             var result = await mediator.Send(new GetCategoryByIdQuery(id));

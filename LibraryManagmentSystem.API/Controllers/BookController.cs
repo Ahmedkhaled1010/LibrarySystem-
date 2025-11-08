@@ -1,4 +1,5 @@
-﻿using LibraryManagmentSystem.Application.Feature.Books.Command.CreateBook;
+﻿using LibraryManagmentSystem.API.Attribute;
+using LibraryManagmentSystem.Application.Feature.Books.Command.CreateBook;
 using LibraryManagmentSystem.Application.Feature.Books.Command.DeleteBook;
 using LibraryManagmentSystem.Application.Feature.Books.Command.UpdateBook;
 using LibraryManagmentSystem.Application.Feature.Books.Queries.GetAllBook;
@@ -25,6 +26,7 @@ namespace LibraryManagmentSystem.API.Controllers
             return Ok(result);
         }
         [HttpGet]
+        [Cache]
         public async Task<IActionResult> GetAllBooks([FromQuery] BookQueryParams bookQueryParams)
         {
 
@@ -32,6 +34,8 @@ namespace LibraryManagmentSystem.API.Controllers
             return Ok(result);
         }
         [HttpGet("{id}")]
+        [Cache]
+
         public async Task<IActionResult> GetBookById(string id)
         {
             var result = await mediator.Send(new GetBookByIdQuery(id));
