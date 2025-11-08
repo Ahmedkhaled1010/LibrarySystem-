@@ -3,10 +3,11 @@ using LibraryManagmentSystem.Domain.Entity;
 using LibraryManagmentSystem.Infrastructure.Data.Context;
 using LibraryManagmentSystem.Infrastructure.Data.MongoContext;
 using Microsoft.EntityFrameworkCore.Storage;
+using StackExchange.Redis;
 
 namespace LibraryManagmentSystem.Infrastructure.Data.Repositories
 {
-    public class UnitOfWork(LibraryDbContext dbContext, MongoDb mongoDb) : IUnitOfWork
+    public class UnitOfWork(LibraryDbContext dbContext, MongoDb mongoDb, IConnectionMultiplexer connection) : IUnitOfWork
     {
         private readonly Dictionary<string, object> repositories = [];
         private readonly Dictionary<string, object> mongoRepositories = [];
@@ -25,6 +26,8 @@ namespace LibraryManagmentSystem.Infrastructure.Data.Repositories
             return CheckRepository<TEntity, TKey>(dbContext, RepoType);
         }
         public IBorrowRepository borrowRepository => new BorrowRepository(dbContext);
+
+        public ICasheRepository casheRepository => new CasheRepository(connection);
 
         public async Task<IDbContextTransaction> BeginTransactionAsync()
         {

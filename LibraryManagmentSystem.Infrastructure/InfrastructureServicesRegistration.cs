@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 
 namespace LibraryManagmentSystem.Infrastructure
 {
@@ -30,7 +31,10 @@ namespace LibraryManagmentSystem.Infrastructure
             services.AddSingleton<MongoDb>();
             services.AddSingleton(typeof(IMongoRepository<>), typeof(MongoRepository<>));
 
-
+            services.AddSingleton<IConnectionMultiplexer>((_) =>
+            {
+                return ConnectionMultiplexer.Connect(configuration.GetConnectionString("RedisConnectionString"));
+            });
             services.AddScoped<IServicesManager, ServicesManager>();
 
             services.AddScoped<IAuthServices, AuthServices>();
@@ -51,8 +55,12 @@ namespace LibraryManagmentSystem.Infrastructure
             services.AddScoped<Func<IBorrowRecordService>>(provider => () => provider.GetService<IBorrowRecordService>()!);
             services.AddScoped<IReservationServices, ReservationServices>();
             services.AddScoped<Func<IReservationServices>>(provider => () => provider.GetService<IReservationServices>()!); services.AddScoped<IReviewClient, ReviewClient>();
+
+
             services.AddScoped<Func<IReviewClient>>(provider => () => provider.GetService<IReviewClient>()!);
 
+            services.AddScoped<ICasheServices, CasheServices>();
+            services.AddScoped<Func<ICasheServices>>(provider => () => provider.GetService<ICasheServices>()!);
             services.AddScoped<IRequestClient, RequestClient>();
             services.AddScoped<Func<IRequestClient>>(provider => () => provider.GetService<IRequestClient>()!);
             services.AddScoped<INotificationClient, NotificationClient>();

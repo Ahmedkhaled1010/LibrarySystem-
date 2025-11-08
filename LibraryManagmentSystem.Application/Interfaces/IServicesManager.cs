@@ -16,6 +16,7 @@ namespace LibraryManagmentSystem.Application.Interfaces
         public IRequestClient requestClient { get; }
         public IReviewClient reviewServices { get; }
         public INotificationClient notificationClient { get; }
+        public ICasheServices casheServices { get; }
 
     }
 }
