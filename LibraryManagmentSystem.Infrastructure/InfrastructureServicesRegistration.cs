@@ -61,6 +61,8 @@ namespace LibraryManagmentSystem.Infrastructure
 
             services.AddScoped<ICasheServices, CasheServices>();
             services.AddScoped<Func<ICasheServices>>(provider => () => provider.GetService<ICasheServices>()!);
+            services.AddScoped<IFavoriteCacheService, FavoriteCacheService>();
+            services.AddScoped<Func<IFavoriteCacheService>>(provider => () => provider.GetService<IFavoriteCacheService>()!);
             services.AddScoped<IBasketServices, BasketServices>();
             services.AddScoped<Func<IBasketServices>>(provider => () => provider.GetService<IBasketServices>()!);
             services.AddScoped<IPaymentServices, PaymentServices>();

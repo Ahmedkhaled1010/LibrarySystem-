@@ -21,6 +21,7 @@ namespace LibraryManagmentSystem.Application.Interfaces
         public IBasketServices basketServices { get; }
         public IBookPurchaseServices bookPurchaseServices { get; }
         public IPaymentServices paymentServices { get; }
+        public IFavoriteCacheService favoriteCacheService { get; }
 
     }
 }

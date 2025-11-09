@@ -9,9 +9,9 @@ namespace LibraryManagmentSystem.API.Controllers
     public class PaymentController(IServicesManager servicesManager) : ControllerBase
     {
         [HttpGet("buy-book")]
-        public async Task<IActionResult> BuyBook()
+        public async Task<IActionResult> BuyBook(string user)
         {
-            var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
 
             await servicesManager.paymentServices.BuyBook(user);
             return Ok();
