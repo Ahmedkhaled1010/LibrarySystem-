@@ -38,5 +38,18 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             await bus.Publish(CheckoutEvent);
 
         }
+
+        public async Task PayFine(string userId, string fineId)
+        {
+            var user = await userManager.FindByIdAsync(userId);
+
+            var fine = new PayFineEvent
+            {
+                UserId = userId,
+                Email = user.Email,
+                FineId = fineId
+            };
+            await bus.Publish(fine);
+        }
     }
 }

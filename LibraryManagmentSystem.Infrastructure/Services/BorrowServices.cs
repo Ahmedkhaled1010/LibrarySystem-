@@ -7,7 +7,6 @@ using LibraryManagmentSystem.Application.Interfaces;
 using LibraryManagmentSystem.Domain.Contracts;
 using LibraryManagmentSystem.Domain.Entity;
 using LibraryManagmentSystem.Shared.DataTransferModel.Borrow;
-using LibraryManagmentSystem.Shared.Model;
 using LibraryManagmentSystem.Shared.Response;
 using MassTransit;
 using Microsoft.AspNetCore.Identity;
@@ -165,14 +164,15 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                     await bus.Publish<ReturnBookEvent>(returnEvent);
                     if (overdueDays > 0)
                     {
-                        Fine fine = new Fine
+                        var fine = new FineAddedEvent
                         {
                             UserId = bookCommand.UserId,
                             Amount = overdueDays * 2,
                             Reason = $"Late return of book {book.Title} by {overdueDays} days.",
-                            DateIssued = DateTime.UtcNow
+                            BorrowId = Borrow.Book.Title
                         };
-                        await servicesManager.FineClient.AddFineAsync(fine);
+                        await bus.Publish(fine);
+                        //    await servicesManager.FineClient.AddFineAsync(fine);
                     }
                     await transaction.CommitAsync();
                     var returnMessage = overdueDays > 0 ? $"Book {book.Title} returned successfully.And You Have A fine , Because You are late {overdueDays} Days for your return."

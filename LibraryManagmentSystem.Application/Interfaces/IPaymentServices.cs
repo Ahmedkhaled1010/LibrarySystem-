@@ -4,5 +4,6 @@
     {
         Task BuyBook(string userId);
         Task CheckOut(string userId);
+        Task PayFine(string userId, string fineId);
     }
 }

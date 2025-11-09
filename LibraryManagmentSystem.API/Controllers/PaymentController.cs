@@ -21,6 +21,14 @@ namespace LibraryManagmentSystem.API.Controllers
             await servicesManager.paymentServices.CheckOut(user);
             return Ok();
         }
+        [HttpGet("pay-fine")]
+        public async Task<IActionResult> PayFine(string fineId)
+        {
+            var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            await servicesManager.paymentServices.PayFine(user, fineId);
+            return Ok();
+        }
 
     }
 }
