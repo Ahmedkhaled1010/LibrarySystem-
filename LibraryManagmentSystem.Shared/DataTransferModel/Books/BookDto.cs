@@ -4,10 +4,9 @@
     {
         public Guid Id { get; set; }
         public string Title { get; set; } = default!;
-        public bool IsAvailableForSale { get; set; }
-        public bool IsAvailable { get; set; }
-        public int CopiesAvailable { get; set; } = 1;
-        public int CopiesForSaleAvailable { get; set; }
+        public bool IsAvailableForSale { get; set; } = true;
+        public bool IsAvailable { get; set; } = true;
+
         public string Description { get; set; } = default!;
 
         public string CategoryName { get; set; } = default!;

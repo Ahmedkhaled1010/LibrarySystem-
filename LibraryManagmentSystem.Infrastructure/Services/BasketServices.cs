@@ -71,6 +71,18 @@ namespace LibraryManagmentSystem.Infrastructure.Services
 
         }
 
+        public async Task<decimal> GetTotal(string key)
+        {
+            var basket = (await GetBasketAsync(key)).Data;
+            decimal total = 0;
+            foreach (var item in basket.Items)
+            {
+
+                total += item.book.Price;
+            }
+            return total;
+        }
+
         public async Task RemoveItemAsync(string userId, string bookId)
         {
             var res = await GetBasketAsync(userId);

@@ -19,6 +19,8 @@ namespace LibraryManagmentSystem.Application.Interfaces
         public INotificationClient notificationClient { get; }
         public ICasheServices casheServices { get; }
         public IBasketServices basketServices { get; }
+        public IBookPurchaseServices bookPurchaseServices { get; }
+        public IPaymentServices paymentServices { get; }
 
     }
 }

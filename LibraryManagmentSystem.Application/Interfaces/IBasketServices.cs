@@ -11,5 +11,6 @@ namespace LibraryManagmentSystem.Domain.Contracts
         Task<bool> DeleteBasketAsync(string id);
         Task RemoveItemAsync(string userId, string bookId);
         Task UpdateItemQuantityAsync(string userId, string bookId, int newQty);
+        Task<decimal> GetTotal(string key);
     }
 }

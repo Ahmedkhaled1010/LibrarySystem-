@@ -17,9 +17,12 @@ namespace LibraryManagmentSystem.Application.Interfaces
         Task<ApiResponse<BookDto>> UpdateBookAsync(UpdateBookCommand bookCommand);
         Task<ApiResponse<string>> DeleteBookAsync(DeleteBookCommand bookId);
         Task<Book> GetBookAsync(Guid bookId);
-        bool IsAvailable(Book book);
-        void UpdateAvailabilityAsync(Book book, int change);
+        //bool IsAvailable(Book book);
+        //void UpdateAvailabilityAsync(Book book, int change);
+        void UpdateAvailabilityAsync(Book book, bool avail);
+
         void UpdateTotalBorrow(Book book);
+        void UpdateAvailabilityForSaleAsync(Book book, bool avail);
 
 
 

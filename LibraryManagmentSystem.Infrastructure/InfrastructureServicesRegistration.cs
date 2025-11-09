@@ -63,6 +63,10 @@ namespace LibraryManagmentSystem.Infrastructure
             services.AddScoped<Func<ICasheServices>>(provider => () => provider.GetService<ICasheServices>()!);
             services.AddScoped<IBasketServices, BasketServices>();
             services.AddScoped<Func<IBasketServices>>(provider => () => provider.GetService<IBasketServices>()!);
+            services.AddScoped<IPaymentServices, PaymentServices>();
+            services.AddScoped<Func<IPaymentServices>>(provider => () => provider.GetService<IPaymentServices>()!);
+            services.AddScoped<IBookPurchaseServices, BookPurchaseServices>();
+            services.AddScoped<Func<IBookPurchaseServices>>(provider => () => provider.GetService<IBookPurchaseServices>()!);
             services.AddScoped<IRequestClient, RequestClient>();
             services.AddScoped<Func<IRequestClient>>(provider => () => provider.GetService<IRequestClient>()!);
             services.AddScoped<INotificationClient, NotificationClient>();

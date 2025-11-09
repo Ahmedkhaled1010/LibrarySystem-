@@ -30,5 +30,7 @@ namespace LibraryManagmentSystem.Domain.Entity
         public string? ImagePath { get; set; }
 
         public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
+        public ICollection<BookPurchase> BookPurchases { get; set; } = new List<BookPurchase>();
+
     }
 }

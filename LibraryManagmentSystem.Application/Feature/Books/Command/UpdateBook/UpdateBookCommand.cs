@@ -11,8 +11,8 @@ namespace LibraryManagmentSystem.Application.Feature.Books.Command.UpdateBook
         public string? Title { get; set; } = default!;
 
 
-        public int? CopiesAvailable { get; set; } = 1;
-
+        public bool? IsAvailableForSale { get; set; }
+        public bool? IsAvailable { get; set; }
         public string? CategoryName { get; set; } = default!;
         public int? PublishedYear { get; set; }
         public int? BorrowDurationDays { get; set; } = 10;
@@ -20,7 +20,6 @@ namespace LibraryManagmentSystem.Application.Feature.Books.Command.UpdateBook
 
 
         public string? Description { get; set; } = default!;
-        public int? CopiesForSaleAvailable { get; set; }
         public string? Language { get; set; } = default!;
 
 

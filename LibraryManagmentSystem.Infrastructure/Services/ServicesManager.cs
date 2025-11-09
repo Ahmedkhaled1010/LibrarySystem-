@@ -17,7 +17,9 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         Func<INotificationClient> INotify,
         Func<IReservationServices> IReserve,
         Func<ICasheServices> ICashe,
-        Func<IBasketServices> IBasket
+        Func<IBasketServices> IBasket,
+        Func<IPaymentServices> IPayment,
+        Func<IBookPurchaseServices> IPurchase
 
        ) : IServicesManager
     {
@@ -48,5 +50,9 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         public ICasheServices casheServices => ICashe.Invoke();
 
         public IBasketServices basketServices => IBasket.Invoke();
+
+        public IBookPurchaseServices bookPurchaseServices => IPurchase.Invoke();
+
+        public IPaymentServices paymentServices => IPayment.Invoke();
     }
 }

@@ -7,11 +7,14 @@ namespace LibraryManagmentSystem.Domain.Entity
     {
         public string Title { get; set; } = default!;
         public int PublishedYear { get; set; }
-        public int CopiesAvailable { get; set; }
-        public int CopiesForSaleAvailable { get; set; }
-        public bool IsAvailableForSale => CopiesForSaleAvailable > 0;
+        //public int CopiesAvailable { get; set; }
+        //public int CopiesForSaleAvailable { get; set; }
+        //public bool IsAvailableForSale => CopiesForSaleAvailable > 0;
 
-        public bool IsAvailable => CopiesAvailable > 0;
+        //public bool IsAvailable => CopiesAvailable > 0;
+        public bool IsAvailableForSale { get; set; } = true;
+
+        public bool IsAvailable { get; set; } = true;
         [ForeignKey(nameof(Author))]
 
         public string AuthorId { get; set; } = default!;

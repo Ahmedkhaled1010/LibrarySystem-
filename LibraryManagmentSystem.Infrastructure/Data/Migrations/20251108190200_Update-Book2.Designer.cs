@@ -4,6 +4,7 @@ using LibraryManagmentSystem.Infrastructure.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibraryManagmentSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    partial class LibraryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251108190200_Update-Book2")]
+    partial class UpdateBook2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -97,34 +100,6 @@ namespace LibraryManagmentSystem.Infrastructure.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("books");
-                });
-
-            modelBuilder.Entity("LibraryManagmentSystem.Domain.Entity.BookPurchase", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("BookId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("PurchasedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BookId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("bookPurchases");
                 });
 
             modelBuilder.Entity("LibraryManagmentSystem.Domain.Entity.BorrowRecord", b =>
@@ -573,25 +548,6 @@ namespace LibraryManagmentSystem.Infrastructure.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("LibraryManagmentSystem.Domain.Entity.BookPurchase", b =>
-                {
-                    b.HasOne("LibraryManagmentSystem.Domain.Entity.Book", "Book")
-                        .WithMany()
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("LibraryManagmentSystem.Domain.Entity.User", "User")
-                        .WithMany("BookPurchases")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Book");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("LibraryManagmentSystem.Domain.Entity.BorrowRecord", b =>
                 {
                     b.HasOne("LibraryManagmentSystem.Domain.Entity.Book", "Book")
@@ -741,8 +697,6 @@ namespace LibraryManagmentSystem.Infrastructure.Migrations
 
             modelBuilder.Entity("LibraryManagmentSystem.Domain.Entity.User", b =>
                 {
-                    b.Navigation("BookPurchases");
-
                     b.Navigation("BooksAuthored");
 
                     b.Navigation("BorrowRecords");

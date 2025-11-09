@@ -12,7 +12,7 @@ namespace LibraryManagmentSystem.Infrastructure.Data.Specifications.BooksSpecifi
     (string.IsNullOrEmpty(queryParams.CategoryName) || p.Category.Name.ToLower().Contains(queryParams.CategoryName.ToLower())) &&
     (!queryParams.MinPrice.HasValue || p.Price >= queryParams.MinPrice) &&
     (!queryParams.MaxPrice.HasValue || p.Price <= queryParams.MaxPrice) &&
-    (!queryParams.Price.HasValue || p.Price == queryParams.Price)
+    (!queryParams.Price.HasValue || p.Price == queryParams.Price) && (p.IsAvailableForSale == true)
 )
 
 

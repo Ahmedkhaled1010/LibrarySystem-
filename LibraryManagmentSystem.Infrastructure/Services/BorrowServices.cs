@@ -32,8 +32,8 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                 return checkUser;
             }
             Book? book = await servicesManager.BookServices.GetBookAsync(command.BookId);
-            var isAvailable = servicesManager.BookServices.IsAvailable(book);
-            if (!isAvailable)
+            //var isAvailable = servicesManager.BookServices.IsAvailable(book);
+            if (!book.IsAvailable)
             {
                 await servicesManager.ReservationServices.CreateReservation(user.Id, book.Id);
                 return ApiResponse<string>.Fail($"Book {book.Title} is not available");
@@ -91,12 +91,12 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                         return checkUser;
                     }
                     Book? book = await servicesManager.BookServices.GetBookAsync(BookId);
-                    var isAvailable = servicesManager.BookServices.IsAvailable(book);
-                    if (!isAvailable)
-                    {
-                        //Implement a waitlist feature here in the future   
-                        return ApiResponse<string>.Fail($"Book {book.Title} is not available");
-                    }
+                    servicesManager.BookServices.UpdateAvailabilityAsync(book, false);
+                    //if (!isAvailable)
+                    //{
+                    //    //Implement a waitlist feature here in the future   
+                    //    return ApiResponse<string>.Fail($"Book {book.Title} is not available");
+                    //}
                     var borrowRecord = await servicesManager.borrowRecordService.GetActiveBorrowAsync(BookId, UserId);
                     if (borrowRecord is not null)
                     {
@@ -105,7 +105,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
 
                     }
                     await servicesManager.borrowRecordService.CreateBorrowRecordAsync(book, UserId);
-                    servicesManager.BookServices.UpdateAvailabilityAsync(book, -1);
+                    //servicesManager.BookServices.UpdateAvailabilityAsync(book, -1);
                     await servicesManager.UserService.UpdateBorrowLimitAsync(user, -1);
                     servicesManager.BookServices.UpdateTotalBorrow(book);
                     await servicesManager.UserService.UpdateTotalBorrowAsync(user);
@@ -150,7 +150,9 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                     servicesManager.borrowRecordService.UpdateStatus(Borrow);
 
                     Book? book = await servicesManager.BookServices.GetBookAsync(bookCommand.BookId);
-                    servicesManager.BookServices.UpdateAvailabilityAsync(book, 1);
+                    // servicesManager.BookServices.UpdateAvailabilityAsync(book, 1);
+                    servicesManager.BookServices.UpdateAvailabilityAsync(book, true);
+
                     await servicesManager.UserService.UpdateBorrowLimitAsync(userId, 1);
                     await unitOfWork.SaveChangesAsync();
                     var returnEvent = new ReturnBookEvent

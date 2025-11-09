@@ -149,17 +149,17 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             return book;
         }
 
-        public bool IsAvailable(Book book)
-        {
-            return book.CopiesAvailable > 0;
-        }
+        //public bool IsAvailable(Book book)
+        //{
+        //    return book.CopiesAvailable > 0;
+        //}
 
-        public void UpdateAvailabilityAsync(Book book, int change)
-        {
-            book.CopiesAvailable += change;
+        //public void UpdateAvailabilityAsync(Book book, int change)
+        //{
+        //    book.CopiesAvailable += change;
 
-            bookRepository.Update(book);
-        }
+        //    bookRepository.Update(book);
+        //}
 
         public void UpdateTotalBorrow(Book book)
         {
@@ -168,5 +168,15 @@ namespace LibraryManagmentSystem.Infrastructure.Services
 
         }
 
+        public async void UpdateAvailabilityAsync(Book book, bool avail)
+        {
+            book.IsAvailable = avail;
+            bookRepository.Update(book);
+        }
+        public async void UpdateAvailabilityForSaleAsync(Book book, bool avail)
+        {
+            book.IsAvailableForSale = avail;
+            bookRepository.Update(book);
+        }
     }
 }

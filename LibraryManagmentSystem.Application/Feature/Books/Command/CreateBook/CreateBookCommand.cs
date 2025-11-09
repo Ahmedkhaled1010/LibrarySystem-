@@ -12,9 +12,7 @@ namespace LibraryManagmentSystem.Application.Feature.Books.Command.CreateBook
         public string Title { get; set; } = default!;
 
 
-        public int CopiesAvailable { get; set; } = 1;
         public string Description { get; set; } = default!;
-        public int CopiesForSaleAvailable { get; set; }
         public string Language { get; set; } = default!;
 
         public string CategoryName { get; set; } = default!;

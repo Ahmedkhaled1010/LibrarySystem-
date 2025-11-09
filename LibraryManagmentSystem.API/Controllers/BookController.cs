@@ -2,6 +2,7 @@
 using LibraryManagmentSystem.Application.Feature.Books.Command.DeleteBook;
 using LibraryManagmentSystem.Application.Feature.Books.Command.UpdateBook;
 using LibraryManagmentSystem.Application.Feature.Books.Queries.GetAllBook;
+using LibraryManagmentSystem.Application.Feature.Books.Queries.GetAllBookPurchase;
 using LibraryManagmentSystem.Application.Feature.Books.Queries.GetBookById;
 using LibraryManagmentSystem.Shared.QueryParams;
 using MediatR;
@@ -48,6 +49,14 @@ namespace LibraryManagmentSystem.API.Controllers
         public async Task<IActionResult> DeleteBook(Guid id)
         {
             var result = await mediator.Send(new DeleteBookCommand(id));
+            return Ok(result);
+        }
+        [HttpGet("Purchase")]
+        public async Task<IActionResult> GetBookPurchaseById()
+        {
+            var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var result = await mediator.Send(new GetAllBookPurchaseQuery(user));
             return Ok(result);
         }
     }
