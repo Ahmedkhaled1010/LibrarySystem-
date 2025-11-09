@@ -31,7 +31,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                 Amount = amount,
                 BasketId = userId,
                 Email = user.Email,
-                SuccessUrl = $"https://localhost:7164/api/Payment/buy-book?userId={user.Id}",
+                SuccessUrl = $"http://localhost:4200/payment-success",
                 UserId = userId,
 
             };
