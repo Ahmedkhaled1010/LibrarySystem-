@@ -37,6 +37,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             };
 
             await genericRepository.AddAsync(reservation);
+            await unitOfWork.SaveChangesAsync();
             await bus.Publish(reserve);
         }
 

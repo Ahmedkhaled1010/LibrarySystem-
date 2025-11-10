@@ -1,3 +1,4 @@
+using LibraryManagmentSystem.Domain.Enum.Reservations;
 using LibraryManagmentSystem.Infrastructure.Data.Context;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
@@ -29,11 +30,14 @@ namespace BackgroundServices
 
 
                     await NotifyUpcomingReturns(dbContext);
+                    await NotifyAvailableBooks(dbContext);
                     _logger.LogInformation("Worker running at: {time}",
                         DateTimeOffset.Now);
                 }
 
-                await Task.Delay(1000, stoppingToken);
+                //   await Task.Delay(1000, stoppingToken);
+                await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
+
             }
         }
         private async Task NotifyUpcomingReturns(LibraryDbContext dbContext)
@@ -52,6 +56,24 @@ namespace BackgroundServices
                     UserId = record.UserId,
                     BookTitle = record.Book.Title,
                     ActualReturnDate = record.ActualReturnDate,
+                    UserEmail = record.User.Email
+
+                };
+                await bus.Publish(notify);
+            }
+        }
+        private async Task NotifyAvailableBooks(LibraryDbContext dbContext)
+        {
+            var ReserveBook = await dbContext.reservations
+                .Include(r => r.User)
+                .Where(r => r.Status == ReservationStatus.Active).ToListAsync();
+            foreach (var record in ReserveBook)
+            {
+                var book = await dbContext.books.FirstOrDefaultAsync(b => b.Id == record.BookId);
+                var notify = new NotifyAvailableEvent
+                {
+                    UserId = record.UserId,
+                    BookTitle = book.Title,
                     UserEmail = record.User.Email
 
                 };
