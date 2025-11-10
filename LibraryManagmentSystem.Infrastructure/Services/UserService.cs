@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using LibraryManagmentSystem.Application.Feature.Users.Command.ChangePassword;
+using LibraryManagmentSystem.Application.Feature.Users.Command.DeleteUser;
 using LibraryManagmentSystem.Application.Feature.Users.Command.NewFolder;
 using LibraryManagmentSystem.Application.Feature.Users.Command.UploadProfileImage;
 using LibraryManagmentSystem.Application.Feature.Users.Queries.GetUserById;
@@ -18,6 +19,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
     {
         public async Task<ApiResponse<IEnumerable<UserDto>>> GetAllUser()
         {
+
             var users = await userManager.Users.ToListAsync();
             var UserDtos = new List<UserDto>();
             foreach (var user in users)
@@ -132,6 +134,16 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             }
         }
 
+        public async Task<int> GetTotalUserAsync()
+        {
+            return await userManager.Users.CountAsync();
+        }
 
+        public async Task<ApiResponse<string>> DeleteUserAsync(DeleteUserCommand command)
+        {
+            var user = await userManager.FindByIdAsync(command.UserId);
+            await userManager.DeleteAsync(user);
+            return ApiResponse<string>.Ok("User Deleted Success");
+        }
     }
 }

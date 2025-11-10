@@ -1,4 +1,5 @@
 ﻿using LibraryManagmentSystem.Application.Feature.Users.Command.ChangePassword;
+using LibraryManagmentSystem.Application.Feature.Users.Command.DeleteUser;
 using LibraryManagmentSystem.Application.Feature.Users.Command.NewFolder;
 using LibraryManagmentSystem.Application.Feature.Users.Command.UploadProfileImage;
 using LibraryManagmentSystem.Application.Feature.Users.Queries.GetUserById;
@@ -14,10 +15,12 @@ namespace LibraryManagmentSystem.Application.Interfaces
         Task UpdateBorrowLimitAsync(User user, int change);
         Task<ApiResponse<IEnumerable<UserDto>>> GetAllUser();
         Task UpdateTotalBorrowAsync(User user);
+        Task<ApiResponse<string>> DeleteUserAsync(DeleteUserCommand Id);
         Task<ApiResponse<UserDto>> GetUserDetailsAsync(GetUserByIdQuery query);
         Task<ApiResponse<UserDto>> UpdateUserDetailsAsync(UpdateUserCommand query);
         Task<ApiResponse<string>> ChangePasswordAsync(ChangePasswordCommand command);
         Task<ApiResponse<string>> UploadProfileIamge(UploadProfileImageCommand command);
+        Task<int> GetTotalUserAsync();
     }
 
 

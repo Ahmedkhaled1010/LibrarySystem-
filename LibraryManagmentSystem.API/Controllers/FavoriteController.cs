@@ -1,5 +1,6 @@
 ﻿using LibraryManagmentSystem.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace LibraryManagmentSystem.API.Controllers
 {
@@ -7,24 +8,30 @@ namespace LibraryManagmentSystem.API.Controllers
     [ApiController]
     public class FavoriteController(IServicesManager servicesManager) : ControllerBase
     {
-        [HttpPost("add")]
-        public async Task<IActionResult> Add([FromQuery] string userId, [FromQuery] string bookId)
+        [HttpPost]
+        public async Task<IActionResult> Add([FromQuery] string bookId)
         {
-            await servicesManager.favoriteCacheService.AddToFavoriteAsync(userId, bookId);
-            return Ok("Added");
+            var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            await servicesManager.favoriteCacheService.AddToFavoriteAsync(user, bookId);
+            return Ok();
         }
 
-        [HttpDelete("remove")]
-        public async Task<IActionResult> Remove([FromQuery] string userId, [FromQuery] string bookId)
+        [HttpDelete]
+        public async Task<IActionResult> Remove([FromQuery] string bookId)
         {
-            await servicesManager.favoriteCacheService.RemoveFromFavoriteAsync(userId, bookId);
-            return Ok("Removed");
+            var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            await servicesManager.favoriteCacheService.RemoveFromFavoriteAsync(user, bookId);
+            return Ok();
         }
 
-        [HttpGet("list")]
-        public async Task<IActionResult> Get([FromQuery] string userId)
+        [HttpGet]
+        public async Task<IActionResult> Get()
         {
-            return Ok(await servicesManager.favoriteCacheService.GetFavoritesAsync(userId));
+            var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            return Ok(await servicesManager.favoriteCacheService.GetFavoritesAsync(user));
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using LibraryManagmentSystem.Application.Feature.Users.Command.ChangePassword;
+using LibraryManagmentSystem.Application.Feature.Users.Command.DeleteUser;
 using LibraryManagmentSystem.Application.Feature.Users.Command.NewFolder;
 using LibraryManagmentSystem.Application.Feature.Users.Command.UploadProfileImage;
 using LibraryManagmentSystem.Application.Feature.Users.Queries.GetAllUser;
@@ -28,6 +29,12 @@ namespace LibraryManagmentSystem.API.Controllers
             var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var res = await mediator.Send(new GetUserByIdQuery(user));
+            return Ok(res);
+        }
+        [HttpDelete]
+        public async Task<IActionResult> DeletUser([FromQuery] DeleteUserCommand command)
+        {
+            var res = await mediator.Send(command);
             return Ok(res);
         }
         [HttpPut]

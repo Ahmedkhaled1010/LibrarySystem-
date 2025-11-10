@@ -14,6 +14,7 @@ namespace LibraryManagmentSystem.Application.Interfaces
         Task<ApiResponse<BookDto>> CreateBookAsync(CreateBookCommand createBookCommand);
         Task<PagedApiResponse<BookDto>> GetAllBooksAsync(GetAllBookQuery bookQuery);
         Task<ApiResponse<BookDto>> GetBookAsync(GetBookByIdQuery createBookCommand);
+        Task<BookDto> GetBookAsync();
         Task<ApiResponse<BookDto>> UpdateBookAsync(UpdateBookCommand bookCommand);
         Task<ApiResponse<string>> DeleteBookAsync(DeleteBookCommand bookId);
         Task<Book> GetBookAsync(Guid bookId);
@@ -23,6 +24,9 @@ namespace LibraryManagmentSystem.Application.Interfaces
 
         void UpdateTotalBorrow(Book book);
         void UpdateAvailabilityForSaleAsync(Book book, bool avail);
+
+        Task<int> GetTotalBookAsync();
+        Task<int> GetTotalAvailable(bool isAvail);
 
 
 

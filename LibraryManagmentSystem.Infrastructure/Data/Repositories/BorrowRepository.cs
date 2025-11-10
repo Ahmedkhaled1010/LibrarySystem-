@@ -35,8 +35,9 @@ namespace LibraryManagmentSystem.Infrastructure.Data.Repositories
         {
             return await dbContext.borrowRecords.
                 Include(b => b.Book).
-                Select(b => b.Book).
-                Distinct()
+                Select(b => b.Book)
+
+
                 .CountAsync();
         }
 

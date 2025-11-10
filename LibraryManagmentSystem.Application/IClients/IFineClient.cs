@@ -7,6 +7,8 @@ namespace LibraryManagmentSystem.Application.IClients
     public interface IFineClient
     {
         Task AddFineAsync(Fine fine);
+        Task<ApiResponse<IEnumerable<FineDto>>> GetAllFine();
         Task<ApiResponse<IEnumerable<FineDto>>> GetAllFineByUser(string userId);
+        Task<decimal> GetTotalFine(bool paid);
     }
 }

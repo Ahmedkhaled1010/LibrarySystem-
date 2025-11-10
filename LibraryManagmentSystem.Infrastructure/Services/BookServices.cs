@@ -178,5 +178,22 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             book.IsAvailableForSale = avail;
             bookRepository.Update(book);
         }
+
+        public Task<BookDto> GetBookAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<int> GetTotalBookAsync()
+        {
+            return await bookRepository.CountAsync();
+        }
+
+        public async Task<int> GetTotalAvailable(bool isAvail)
+        {
+            var spec = new BookAvailableCountSpecifications(isAvail);
+            var total = (await bookRepository.GetAllAsync(spec)).Count();
+            return total;
+        }
     }
 }

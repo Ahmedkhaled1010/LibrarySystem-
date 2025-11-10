@@ -58,7 +58,8 @@ namespace LibraryManagmentSystem.Infrastructure
 
 
             services.AddScoped<Func<IReviewClient>>(provider => () => provider.GetService<IReviewClient>()!);
-
+            services.AddScoped<IAdminServices, AdminServices>();
+            services.AddScoped<Func<IAdminServices>>(provider => () => provider.GetService<IAdminServices>()!);
             services.AddScoped<ICasheServices, CasheServices>();
             services.AddScoped<Func<ICasheServices>>(provider => () => provider.GetService<ICasheServices>()!);
             services.AddScoped<IFavoriteCacheService, FavoriteCacheService>();

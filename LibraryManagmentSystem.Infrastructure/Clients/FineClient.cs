@@ -25,5 +25,17 @@ namespace LibraryManagmentSystem.Infrastructure.Clients
             var res = await httpClient.GetFromJsonAsync<IEnumerable<FineDto>>($"https://localhost:7207/api/Fine?userId={userId}");
             return ApiResponse<IEnumerable<FineDto>>.Ok(res);
         }
+        public async Task<ApiResponse<IEnumerable<FineDto>>> GetAllFine()
+        {
+            var res = await httpClient.GetFromJsonAsync<IEnumerable<FineDto>>($"https://localhost:7207/api/Fine/admin");
+            return ApiResponse<IEnumerable<FineDto>>.Ok(res);
+        }
+
+        public async Task<decimal> GetTotalFine(bool paid)
+        {
+
+            var res = await httpClient.GetFromJsonAsync<decimal>($"https://localhost:7207/api/Fine/total-fine/{paid}");
+            return res;
+        }
     }
 }

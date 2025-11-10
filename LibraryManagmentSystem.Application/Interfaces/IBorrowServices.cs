@@ -16,6 +16,7 @@ namespace LibraryManagmentSystem.Application.Interfaces
         Task<ApiResponse<IEnumerable<BorrowRecordDto>>> BorrowingHistory(GetAllBorrowByUserQuery user);
 
 
-
+        Task<int> GetTotalBookBorrowed();
+        Task<int> GetTotalBookNotReturn();
     }
 }

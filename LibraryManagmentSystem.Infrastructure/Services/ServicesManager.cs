@@ -20,7 +20,8 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         Func<IBasketServices> IBasket,
         Func<IPaymentServices> IPayment,
         Func<IBookPurchaseServices> IPurchase,
-        Func<IFavoriteCacheService> IFav
+        Func<IFavoriteCacheService> IFav,
+        Func<IAdminServices> IAdmin
        ) : IServicesManager
     {
         public IAuthServices AuthServices => IAuth.Invoke();
@@ -56,5 +57,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         public IPaymentServices paymentServices => IPayment.Invoke();
 
         public IFavoriteCacheService favoriteCacheService => IFav.Invoke();
+
+        public IAdminServices adminServices => IAdmin.Invoke();
     }
 }

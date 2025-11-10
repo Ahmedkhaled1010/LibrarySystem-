@@ -34,5 +34,9 @@ namespace LibraryManagmentSystem.Infrastructure.Data.Repositories
             return await SpecificationEvaluator.CreateQuery(libraryDbContext.Set<TEntity>(), specifications).CountAsync();
         }
 
+        public async Task<int> CountAsync()
+        {
+            return await libraryDbContext.Set<TEntity>().CountAsync();
+        }
     }
 }

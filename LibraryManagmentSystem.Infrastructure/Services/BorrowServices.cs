@@ -6,6 +6,7 @@ using LibraryManagmentSystem.Application.Feature.Borrow.Queries.GetAllBorrowByUs
 using LibraryManagmentSystem.Application.Interfaces;
 using LibraryManagmentSystem.Domain.Contracts;
 using LibraryManagmentSystem.Domain.Entity;
+using LibraryManagmentSystem.Infrastructure.Data.Specifications.BooksSpecifications;
 using LibraryManagmentSystem.Shared.DataTransferModel.Borrow;
 using LibraryManagmentSystem.Shared.Response;
 using MassTransit;
@@ -204,6 +205,17 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             return ApiResponse<IEnumerable<BorrowRecordDto>>.Ok(mappedBorrowRecords, "Borrow records retrieved successfully.");
 
 
+        }
+
+        public async Task<int> GetTotalBookBorrowed()
+        {
+            return await borrowRepository.GetTotalBookBorrowed();
+        }
+
+        public async Task<int> GetTotalBookNotReturn()
+        {
+            var spec = new BorrowNotReturnedCountSpecifications();
+            return (await borrowRepository.GetAllAsync(spec)).Count();
         }
     }
 }
