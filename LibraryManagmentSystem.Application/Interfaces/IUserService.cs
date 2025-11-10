@@ -15,6 +15,7 @@ namespace LibraryManagmentSystem.Application.Interfaces
         Task UpdateBorrowLimitAsync(User user, int change);
         Task<ApiResponse<IEnumerable<UserDto>>> GetAllUser();
         Task UpdateTotalBorrowAsync(User user);
+        Task<UserDto> GetUserById(string userId);
         Task<ApiResponse<string>> DeleteUserAsync(DeleteUserCommand Id);
         Task<ApiResponse<UserDto>> GetUserDetailsAsync(GetUserByIdQuery query);
         Task<ApiResponse<UserDto>> UpdateUserDetailsAsync(UpdateUserCommand query);

@@ -9,7 +9,7 @@ namespace LibraryManagmentSystem.Application.Feature.Borrow.Queries.GetAllReques
     {
         public async Task<ApiResponse<IReadOnlyList<RequestDto>>> Handle(GetAllRequestQuery request, CancellationToken cancellationToken)
         {
-            return await services.requestClient.GetAllRequest();
+            return await services.requestClient.GetAllRequest(request);
         }
     }
 }

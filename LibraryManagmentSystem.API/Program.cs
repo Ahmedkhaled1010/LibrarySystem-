@@ -1,4 +1,5 @@
 
+using BackgroundServices;
 using LibraryManagmentSystem.API.Extensions;
 using LibraryManagmentSystem.API.Middlewares;
 using LibraryManagmentSystem.Application;
@@ -50,6 +51,7 @@ namespace LibraryManagmentSystem.API
                 });
 
             });
+            builder.Services.AddHostedService<Worker>();
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();

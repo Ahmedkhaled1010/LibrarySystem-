@@ -4,6 +4,7 @@ using LibraryManagmentSystem.Application.Feature.Books.Command.UpdateBook;
 using LibraryManagmentSystem.Application.Feature.Books.Queries.GetAllBook;
 using LibraryManagmentSystem.Application.Feature.Books.Queries.GetAllBookPurchase;
 using LibraryManagmentSystem.Application.Feature.Books.Queries.GetBookById;
+using LibraryManagmentSystem.Application.Interfaces;
 using LibraryManagmentSystem.Shared.QueryParams;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +15,7 @@ namespace LibraryManagmentSystem.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BookController(IMediator mediator) : ControllerBase
+    public class BookController(IMediator mediator, IServicesManager servicesManager) : ControllerBase
     {
         [HttpPost]
         [Authorize(Roles = "Admin,PUBLISHER")]
@@ -58,6 +59,13 @@ namespace LibraryManagmentSystem.API.Controllers
 
             var result = await mediator.Send(new GetAllBookPurchaseQuery(user));
             return Ok(result);
+        }
+        [HttpPost("reserve/{bookId}")]
+        public async Task<IActionResult> ReserveBook(Guid bookId)
+        {
+            var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await servicesManager.ReservationServices.CreateReservation(user, bookId);
+            return Ok();
         }
     }
 }

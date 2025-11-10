@@ -4,6 +4,6 @@ using MediatR;
 
 namespace LibraryManagmentSystem.Application.Feature.Borrow.Queries.GetAllRequest
 {
-    public record GetAllRequestQuery : IRequest<ApiResponse<IReadOnlyList<RequestDto>>>;
+    public record GetAllRequestQuery(string status) : IRequest<ApiResponse<IReadOnlyList<RequestDto>>>;
 
 }

@@ -135,7 +135,15 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                     Name = createBookCommand.CategoryName
                 };
                 await categoryRepository.AddAsync(category);
-                await unitOfWork.SaveChangesAsync();
+                try
+                {
+                    await unitOfWork.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.InnerException?.Message);
+                    throw;
+                }
             }
 
             return category;

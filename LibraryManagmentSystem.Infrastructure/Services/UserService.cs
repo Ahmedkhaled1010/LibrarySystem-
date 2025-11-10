@@ -145,5 +145,11 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             await userManager.DeleteAsync(user);
             return ApiResponse<string>.Ok("User Deleted Success");
         }
+
+        public async Task<UserDto> GetUserById(string userId)
+        {
+            var user = await userManager.FindByIdAsync(userId);
+            return mapper.Map<UserDto>(user);
+        }
     }
 }

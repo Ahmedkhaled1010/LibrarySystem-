@@ -8,10 +8,10 @@ namespace LibraryManagmentSystem.API.Controllers
     [ApiController]
     public class RequestController(IMediator mediator) : ControllerBase
     {
-        [HttpGet]
-        public async Task<IActionResult> GetRequests()
+        [HttpGet("{status}")]
+        public async Task<IActionResult> GetRequests(string status)
         {
-            var request = new GetAllRequestQuery();
+            var request = new GetAllRequestQuery(status);
             var result = await mediator.Send(request);
             return Ok(result);
         }
