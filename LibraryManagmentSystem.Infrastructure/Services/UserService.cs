@@ -14,6 +14,7 @@ using LibraryManagmentSystem.Shared.DataTransferModel.UserDto;
 using LibraryManagmentSystem.Shared.Response;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace LibraryManagmentSystem.Infrastructure.Services
 {
@@ -60,17 +61,17 @@ namespace LibraryManagmentSystem.Infrastructure.Services
 
             if (user == null)
             {
-                return ApiResponse<string>.Fail("User not found");
+                return ApiResponse<string>.Fail("User not found",(int)HttpStatusCode.NotFound);
             }
             if (user.fines > 0)
             {
-                return ApiResponse<string>.Fail("You cannot borrow before paying the fines.");
+                return ApiResponse<string>.ValidationError("You cannot borrow before paying the fines.");
             }
             if (user.LimitOfBooksCanBorrow <= 0)
             {
-                return ApiResponse<string>.Fail("You have exceeded your allowed limit, upgrade your Budget");
+                return ApiResponse<string>.ValidationError("You have exceeded your allowed limit, upgrade your Budget");
             }
-            return null;
+            return ApiResponse<string>.Ok("User passed all checks");
         }
         public async Task UpdateTotalBorrowAsync(User user)
         {

@@ -18,6 +18,14 @@ namespace LibraryManagmentSystem.Shared.Response
 
         public static ApiResponse<T> Ok(T data, string? message = null, int statusCode = (int)HttpStatusCode.OK) =>
         new ApiResponse<T> { Success = true, Data = data, Message = message, StatusCode =statusCode };
+        public static ApiResponse<T> ValidationError(string message)=> new ApiResponse<T>
+        {
+            Success = false,
+            Message = message,
+            StatusCode = (int)HttpStatusCode.BadRequest
+        };
+      
+
 
     }
 }

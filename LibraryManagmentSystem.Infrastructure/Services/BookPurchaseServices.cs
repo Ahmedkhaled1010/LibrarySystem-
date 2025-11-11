@@ -15,7 +15,9 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         private readonly IGenericRepository<BookPurchase, Guid> repository = unitOfWork.GetRepository<BookPurchase, Guid>();
         public async Task AddBookPurchaseAsync(string userId, Guid BookId)
         {
-            var Purchase = new BookPurchase
+            try
+            {
+                var Purchase = new BookPurchase
             {
                 UserId = userId,
                 BookId = BookId,
@@ -24,15 +26,14 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             await repository.AddAsync(Purchase);
             var book = await servicesManager.BookServices.GetBookAsync(BookId);
             servicesManager.BookServices.UpdateAvailabilityForSaleAsync(book, false);
-            try
-            {
+         
                 await unitOfWork.SaveChangesAsync();
 
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.InnerException?.Message);
-                throw;
+                
             }
 
         }
