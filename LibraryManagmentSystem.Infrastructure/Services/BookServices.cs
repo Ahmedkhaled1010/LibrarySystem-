@@ -161,18 +161,6 @@ namespace LibraryManagmentSystem.Infrastructure.Services
       
        
 
-        //public bool IsAvailable(Book book)
-        //{
-        //    return book.CopiesAvailable > 0;
-        //}
-
-        //public void UpdateAvailabilityAsync(Book book, int change)
-        //{
-        //    book.CopiesAvailable += change;
-
-        //    bookRepository.Update(book);
-        //}
-
         public void UpdateTotalBorrow(Book book)
         {
             book.TotalBorrow += 1;
