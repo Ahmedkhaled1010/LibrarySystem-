@@ -1,19 +1,23 @@
-﻿namespace LibraryManagmentSystem.Shared.Response
+﻿using System.Net;
+
+namespace LibraryManagmentSystem.Shared.Response
 {
     public class ApiResponse<T>
     {
         public bool Success { get; set; }
         public string? Message { get; set; }
         public T? Data { get; set; }
+        public int StatusCode { get; set; }
+
         public List<string>? Errors { get; set; }
 
-        public static ApiResponse<T> Fail(string message) =>
-            new ApiResponse<T> { Success = false, Message = message };
-        public static ApiResponse<T> Fail(string message, List<string> errors) =>
-            new ApiResponse<T> { Success = false, Message = message, Errors = errors };
+        public static ApiResponse<T> Fail(string message , int statusCode = (int)HttpStatusCode.InternalServerError) =>
+            new ApiResponse<T> { Success = false, Message = message ,StatusCode=statusCode};
+        public static ApiResponse<T> Fail(string message, List<string> errors, int statusCode = (int)HttpStatusCode.InternalServerError) =>
+            new ApiResponse<T> { Success = false, Message = message, Errors = errors,StatusCode=statusCode };
 
         public static ApiResponse<T> Ok(T data, string? message = null) =>
-        new ApiResponse<T> { Success = true, Data = data, Message = message };
+        new ApiResponse<T> { Success = true, Data = data, Message = message, StatusCode = (int)HttpStatusCode.OK, };
 
     }
 }

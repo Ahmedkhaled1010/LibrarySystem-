@@ -36,7 +36,8 @@ namespace LibraryManagmentSystem.Infrastructure
                 return ConnectionMultiplexer.Connect(configuration.GetConnectionString("RedisConnectionString"));
             });
             services.AddScoped<IServicesManager, ServicesManager>();
-
+            services.AddScoped<IAdminServices, AdminServices>();
+            services.AddScoped<Func<IAdminServices>>(provider => () => provider.GetService<IAdminServices>()!);
             services.AddScoped<IAuthServices, AuthServices>();
             services.AddScoped<Func<IAuthServices>>(provider => () => provider.GetService<IAuthServices>()!);
             services.AddScoped<IJwtServices, JwtServices>();
@@ -54,12 +55,16 @@ namespace LibraryManagmentSystem.Infrastructure
             services.AddScoped<IBorrowRecordService, BorrowRecordService>();
             services.AddScoped<Func<IBorrowRecordService>>(provider => () => provider.GetService<IBorrowRecordService>()!);
             services.AddScoped<IReservationServices, ReservationServices>();
-            services.AddScoped<Func<IReservationServices>>(provider => () => provider.GetService<IReservationServices>()!); services.AddScoped<IReviewClient, ReviewClient>();
+            services.AddScoped<Func<IReservationServices>>(provider => () => provider.GetService<IReservationServices>()!);
+
+            services.AddScoped<IPublishEventServices, PublishEventServices>();
+            services.AddScoped<Func<IPublishEventServices>>(provider => () => provider.GetService<IPublishEventServices>()!);
+
+            services.AddScoped<IReviewClient, ReviewClient>();
 
 
             services.AddScoped<Func<IReviewClient>>(provider => () => provider.GetService<IReviewClient>()!);
-            services.AddScoped<IAdminServices, AdminServices>();
-            services.AddScoped<Func<IAdminServices>>(provider => () => provider.GetService<IAdminServices>()!);
+           
             services.AddScoped<ICasheServices, CasheServices>();
             services.AddScoped<Func<ICasheServices>>(provider => () => provider.GetService<ICasheServices>()!);
             services.AddScoped<IFavoriteCacheService, FavoriteCacheService>();

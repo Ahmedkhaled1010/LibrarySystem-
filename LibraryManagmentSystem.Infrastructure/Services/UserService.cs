@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using LibraryManagmentSystem.Application.Feature.Auth.Register;
 using LibraryManagmentSystem.Application.Feature.Users.Command.ChangePassword;
 using LibraryManagmentSystem.Application.Feature.Users.Command.DeleteUser;
 using LibraryManagmentSystem.Application.Feature.Users.Command.NewFolder;
@@ -6,6 +7,7 @@ using LibraryManagmentSystem.Application.Feature.Users.Command.UploadProfileImag
 using LibraryManagmentSystem.Application.Feature.Users.Queries.GetUserById;
 using LibraryManagmentSystem.Application.IClients;
 using LibraryManagmentSystem.Application.Interfaces;
+using LibraryManagmentSystem.Domain.Contracts;
 using LibraryManagmentSystem.Domain.Entity;
 using LibraryManagmentSystem.Shared.DataTransferModel.UserDto;
 using LibraryManagmentSystem.Shared.Response;
@@ -15,7 +17,7 @@ using Microsoft.EntityFrameworkCore;
 namespace LibraryManagmentSystem.Infrastructure.Services
 {
     public class UserService(UserManager<User> userManager, IMapper mapper,
-         ISupabaseClient supabase) : IUserService
+         ISupabaseClient supabase,IUnitOfWork unitOfWork) : IUserService
     {
         public async Task<ApiResponse<IEnumerable<UserDto>>> GetAllUser()
         {
@@ -151,5 +153,30 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             var user = await userManager.FindByIdAsync(userId);
             return mapper.Map<UserDto>(user);
         }
-    }
+
+        public async Task<User> CreateUserAsync(RegisterCommand registerDto,string token)
+        {
+            User user = new User
+            {
+                Email = registerDto.EmailAddress,
+                UserName = registerDto.UserName,
+                PhoneNumber = registerDto.PhoneNumber,
+                Name = registerDto.Name
+            };
+            using var transaction = await unitOfWork.BeginTransactionAsync();
+            user.verificationToken = token;
+            var result = await userManager.CreateAsync(user, registerDto.Password);
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(user, "User");
+                await userManager.UpdateAsync(user);
+                await transaction.CommitAsync();
+                return user;
+
+            }
+            else
+                return null;
+
+        }
+        }
 }

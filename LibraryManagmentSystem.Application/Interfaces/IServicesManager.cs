@@ -23,6 +23,7 @@ namespace LibraryManagmentSystem.Application.Interfaces
         public IPaymentServices paymentServices { get; }
         public IFavoriteCacheService favoriteCacheService { get; }
         public IAdminServices adminServices { get; }
+        public IPublishEventServices publishEventServices { get; }
 
     }
 }

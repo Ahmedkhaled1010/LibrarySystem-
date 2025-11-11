@@ -1,7 +1,9 @@
-﻿using LibraryManagmentSystem.Application.Feature.Auth.Login;
+﻿using DnsClient.Internal;
+using LibraryManagmentSystem.Application.Feature.Auth.Login;
 using LibraryManagmentSystem.Application.Feature.Auth.Register;
 using LibraryManagmentSystem.Application.Feature.Auth.ResetPassword;
 using LibraryManagmentSystem.Application.Interfaces;
+using LibraryManagmentSystem.Domain.Contracts;
 using LibraryManagmentSystem.Domain.Entity;
 using LibraryManagmentSystem.Shared.DataTransferModel.Auth;
 using LibraryManagmentSystem.Shared.Helper;
@@ -9,8 +11,10 @@ using LibraryManagmentSystem.Shared.Response;
 using MassTransit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SharedEventsServices.Events;
+using System.Net;
 using System.Security.Cryptography;
 
 namespace LibraryManagmentSystem.Infrastructure.Services
@@ -19,62 +23,62 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         IUserValidationServices userValidation,
         IJwtServices jwtServices,
         IBus bus,
-        IOptions<AppSettings> options) : IAuthServices
+        IOptions<AppSettings> options,
+        IUnitOfWork unitOfWork,
+        ILogger<AuthServices> logger      ,
+        IServicesManager servicesManager) : IAuthServices
     {
         private readonly string baseUrl = options.Value.BaseUrl;
 
         public async Task<ApiResponse<RegisterResponse>> RegisterAsync(RegisterCommand registerDto)
         {
-            User user = new User
-            {
-                Email = registerDto.EmailAddress,
-                UserName = registerDto.UserName,
-                PhoneNumber = registerDto.PhoneNumber,
-                Name = registerDto.Name
-            };
+            
             var error = await userValidation.ValidateUserRegistrationAsync(registerDto);
             if (error != null)
             {
                 return new ApiResponse<RegisterResponse>()
                 {
                     Success = false,
-                    Message = error
+                    Message = error,
+                    StatusCode = (int)HttpStatusCode.BadRequest
                 };
             }
-            user.verificationToken = GetToken();
-            var result = await userManager.CreateAsync(user, registerDto.Password);
-            if (result.Succeeded)
+            try
             {
-                await userManager.AddToRoleAsync(user, "User");
-                await userManager.UpdateAsync(user);
+                var user = await servicesManager.UserService.CreateUserAsync(registerDto, GetToken());
+
+               
+                  await servicesManager.publishEventServices.SendEmail(user.Email, "Verify your email", $"Please verify your email by clicking on the link: {baseUrl}/api/Auth/verify-email?token={user.verificationToken}");
 
 
-
-                var mail = new SendEmailEvent()
+                if (user != null)
                 {
-                    To = user.Email,
-                    Subject = "Verify your email",
-                    Body = $"Please verify your email by clicking on the link: {baseUrl}/api/Auth/verify-email?token={user.verificationToken}"
-                };
-                await bus.Publish<SendEmailEvent>(mail);
-                return new ApiResponse<RegisterResponse>()
-                {
-                    Success = true,
-
-                    Data = new RegisterResponse
+                    return new ApiResponse<RegisterResponse>()
                     {
-                        Email = user.Email,
-                        Name = user.UserName,
+                        Success = true,
 
-                    }
+                        Data = new RegisterResponse
+                        {
+                            Email = user.Email,
+                            Name = user.UserName,
 
-                };
+
+                        },
+                        StatusCode = (int)HttpStatusCode.Created
+
+
+                    };
+                }
+                else
+                {
+                      return ApiResponse<RegisterResponse>.Fail("Error To Register" ,(int)HttpStatusCode.BadRequest);
+
+                }
+               
+
             }
-            else
-            {
-                var Errors = result.Errors.Select(e => e.Description).ToList();
-                //  throw new BadRequestException(Errors);
-                throw new Exception(string.Join(", ", Errors));
+            catch (Exception ex) {
+                return ApiResponse<RegisterResponse>.Fail(ex.Message);
             }
         }
 
