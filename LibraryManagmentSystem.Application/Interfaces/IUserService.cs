@@ -5,6 +5,7 @@ using LibraryManagmentSystem.Application.Feature.Users.Command.NewFolder;
 using LibraryManagmentSystem.Application.Feature.Users.Command.UploadProfileImage;
 using LibraryManagmentSystem.Application.Feature.Users.Queries.GetUserById;
 using LibraryManagmentSystem.Domain.Entity;
+using LibraryManagmentSystem.Shared.DataTransferModel.Auth;
 using LibraryManagmentSystem.Shared.DataTransferModel.UserDto;
 using LibraryManagmentSystem.Shared.Response;
 
@@ -22,6 +23,7 @@ namespace LibraryManagmentSystem.Application.Interfaces
         Task<ApiResponse<UserDto>> UpdateUserDetailsAsync(UpdateUserCommand query);
         Task<ApiResponse<string>> ChangePasswordAsync(ChangePasswordCommand command);
         Task<ApiResponse<string>> UploadProfileIamge(UploadProfileImageCommand command);
+        Task<AuthDto> AuthUser(User user, TokenModel token,RefreshToken refreshToken);
         Task<User> CreateUserAsync(RegisterCommand command, string token);
         Task<int> GetTotalUserAsync();
     }

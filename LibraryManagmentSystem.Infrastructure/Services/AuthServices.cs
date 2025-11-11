@@ -9,6 +9,7 @@ using LibraryManagmentSystem.Shared.DataTransferModel.Auth;
 using LibraryManagmentSystem.Shared.Helper;
 using LibraryManagmentSystem.Shared.Response;
 using MassTransit;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -48,11 +49,12 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                 var user = await servicesManager.UserService.CreateUserAsync(registerDto, GetToken());
 
                
-                  await servicesManager.publishEventServices.SendEmail(user.Email, "Verify your email", $"Please verify your email by clicking on the link: {baseUrl}/api/Auth/verify-email?token={user.verificationToken}");
 
 
                 if (user != null)
                 {
+                    await servicesManager.publishEventServices.SendEmail(user.Email, "Verify your email", $"Please verify your email by clicking on the link: {baseUrl}/api/Auth/verify-email?token={user.verificationToken}");
+
                     return new ApiResponse<RegisterResponse>()
                     {
                         Success = true,
@@ -85,54 +87,36 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         public async Task<ApiResponse<AuthDto>> LoginAsync(LoginCommand loginDto)
         {
 
-            var user = await userManager.FindByEmailAsync(loginDto.Email);
-            var check = await userValidation.ValidateUserLoginAsync(user, loginDto.Password);
-            if (check != null)
+           try
             {
+                var user = await userManager.FindByEmailAsync(loginDto.Email);
+                var check = await userValidation.ValidateUserLoginAsync(user, loginDto.Password);
+                if (check != null)
+                {
+                    return new ApiResponse<AuthDto>()
+                    {
+                        Success = false,
+                        Message = check,
+                        StatusCode = (int)HttpStatusCode.BadRequest
+
+                    };
+                }
+                var token = await jwtServices.GenrateTokenAsync(user);
+                var User = await servicesManager.UserService.AuthUser(user, token, CreateRefreshToken());
                 return new ApiResponse<AuthDto>()
                 {
-                    Success = false,
-                    Message = check
+                    Success = true,
+                    Message = "Login successful",
+                    Data = User,
+                    StatusCode = (int)HttpStatusCode.OK
+
                 };
             }
-            var token = await jwtServices.GenrateTokenAsync(user);
-            var User = new AuthDto()
+            catch(Exception ex)
             {
-                Email = user.Email,
-                IsAuthenticated = true,
-                Name = user.UserName,
-                Token = token.Token,
-                Roles = token.Roles,
-                IsVerified = user.IsVerified
-            };
-            if (user.RefreshTokens.Any(t => t.IsActive))
-            {
-                var refreshToken = user.RefreshTokens.FirstOrDefault(t => t.IsActive);
-                User.RefreshToken = refreshToken.Token;
-                User.RefreshTokenExpiryTime = refreshToken.ExpiresOn;
-
+                return ApiResponse<AuthDto>.Fail("An error occurred during login: " + ex.Message, (int)HttpStatusCode.InternalServerError);
 
             }
-            else
-            {
-
-                var refreshToken = new RefreshToken()
-                {
-                    Token = GetToken(),
-                    ExpiresOn = DateTime.UtcNow.AddDays(10),
-                    CreatedOn = DateTime.UtcNow,
-                };
-                User.RefreshToken = refreshToken.Token;
-                User.RefreshTokenExpiryTime = refreshToken.ExpiresOn;
-                user.RefreshTokens.Add(refreshToken);
-                await userManager.UpdateAsync(user);
-            }
-            return new ApiResponse<AuthDto>()
-            {
-                Success = true,
-                Message = "Login successful",
-                Data = User
-            };
         }
 
 
@@ -140,28 +124,24 @@ namespace LibraryManagmentSystem.Infrastructure.Services
 
         public async Task<ApiResponse<AuthDto>> RefreshTokenAsync(string token)
         {
-            var userModel = new AuthDto();
             var user = await userManager.Users.SingleOrDefaultAsync(u => u.RefreshTokens.Any(t => t.Token == token));
             if (user is null)
             {
-                return ApiResponse<AuthDto>.Fail("User Not Found");
+                return ApiResponse<AuthDto>.Fail("User Not Found",(int)HttpStatusCode.NotFound);
             }
 
             var refreshToken = user.RefreshTokens.Single(t => t.Token == token);
             if (!refreshToken.IsActive)
             {
-                return ApiResponse<AuthDto>.Fail("Invalid Token");
+                return ApiResponse<AuthDto>.Fail("Invalid Token", (int)HttpStatusCode.Unauthorized);
             }
             refreshToken.RevokedOn = DateTime.UtcNow;
-            var newRefreshToken = new RefreshToken()
-            {
-                Token = GetToken(),
-                ExpiresOn = DateTime.UtcNow.AddDays(10),
-                CreatedOn = DateTime.UtcNow,
-            };
+            var newRefreshToken = CreateRefreshToken();
             user.RefreshTokens.Add(newRefreshToken);
             await userManager.UpdateAsync(user);
             var jwtToken = await jwtServices.GenrateTokenAsync(user);
+            var userModel = new AuthDto();
+
             userModel.Email = user.Email;
             userModel.IsAuthenticated = true;
             userModel.Name = user.UserName;
@@ -169,7 +149,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             userModel.Roles = jwtToken.Roles;
             userModel.RefreshToken = newRefreshToken.Token;
             userModel.RefreshTokenExpiryTime = newRefreshToken.ExpiresOn;
-            return ApiResponse<AuthDto>.Ok(userModel, "Refresh Token Successfuly");
+            return ApiResponse<AuthDto>.Ok(userModel, "Refresh Token Successfuly", (int)HttpStatusCode.OK);
         }
 
         public async Task<ApiResponse<bool>> ForgetPasswordAsync(string email)
@@ -178,28 +158,15 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             var user = await userManager.FindByEmailAsync(email);
             if (user == null)
             {
-                return ApiResponse<bool>.Fail("User not found");
+                return ApiResponse<bool>.Fail("User not found",(int)HttpStatusCode.NotFound);
             }
             var otpCode = new Random().Next(100000, 999999).ToString();
 
             user.resetPasswordToken = otpCode;
             user.resetPasswordTokenExpires = DateTime.UtcNow.AddMinutes(30);
 
-            //var mail = new Email()
-            //{
-            //    To = user.Email,
-            //    Body = $"Your password reset code is: {otpCode}\nThis code will expire in 30 minutes.",
-            //    Subject = "Reset Password Code"
-            //};
-            ////  emailServices.SendEmail(mail);
-            //await emailClient.SendEmailAsync(mail);
-            var mail = new SendEmailEvent()
-            {
-                To = user.Email,
-                Body = $"Your password reset code is: {otpCode}\nThis code will expire in 30 minutes.",
-                Subject = "Reset Password Code"
-            };
-            await bus.Publish<SendEmailEvent>(mail);
+            await servicesManager.publishEventServices.SendEmail(user.Email, "Reset Password Code", $"Your password reset code is: {otpCode}\nThis code will expire in 30 minutes.");
+           
             await userManager.UpdateAsync(user);
 
             return ApiResponse<bool>.Ok(true, "Reset Password Email Sent");
@@ -209,7 +176,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             var user = await userManager.Users.SingleOrDefaultAsync(u => u.resetPasswordToken == command.Code && u.resetPasswordTokenExpires > DateTime.UtcNow);
             if (user == null)
             {
-                return ApiResponse<bool>.Fail("Invalid or Expired Token");
+                return ApiResponse<bool>.Fail("Invalid or Expired Token",(int)HttpStatusCode.Unauthorized);
             }
             var resetUser = user;
             resetUser.resetPasswordToken = null;
@@ -226,21 +193,21 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                 var Errors = addPassResult.Errors.Select(e => e.Description).ToList();
                 throw new Exception(string.Join(", ", Errors));
             }
-            return ApiResponse<bool>.Ok(true, "Password Reset Successfully");
+            return ApiResponse<bool>.Ok(true, "Password Reset Successfully", (int)HttpStatusCode.OK);
         }
 
         public async Task<ApiResponse<bool>> RevokeTokenAsync(string token)
         {
             var user = await userManager.Users.SingleOrDefaultAsync(u => u.RefreshTokens.Any(t => t.Token == token));
             if (user is null)
-                return ApiResponse<bool>.Fail("User Not Found");
+                return ApiResponse<bool>.Fail("User Not Found", (int)HttpStatusCode.NotFound);
             var refreshToken = user.RefreshTokens.Single(t => t.Token == token);
             if (!refreshToken.IsActive)
-                return ApiResponse<bool>.Fail("Invalid Token");
+                return ApiResponse<bool>.Fail("Invalid Token", (int)HttpStatusCode.Unauthorized);
             refreshToken.RevokedOn = DateTime.UtcNow;
 
             await userManager.UpdateAsync(user);
-            return ApiResponse<bool>.Ok(true, "");
+            return ApiResponse<bool>.Ok(true, "",, (int)HttpStatusCode.Unauthorized);
         }
 
         public async Task<ApiResponse<bool>> VerifyEmailAsync(string token)
@@ -248,12 +215,12 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             var user = await userManager.Users.SingleOrDefaultAsync(u => u.verificationToken == token);
             if (user is null)
             {
-                return ApiResponse<bool>.Fail("Invalid Token");
+                return ApiResponse<bool>.Fail("Invalid Token",(int)HttpStatusCode.Unauthorized);
             }
             user.IsVerified = true;
             user.verificationToken = null;
             await userManager.UpdateAsync(user);
-            return ApiResponse<bool>.Ok(true, "Email Verified Successfully");
+            return ApiResponse<bool>.Ok(true, "Email Verified Successfully", (int)HttpStatusCode.OK);
         }
         private string GetToken()
         {
@@ -268,5 +235,15 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             return token;
 
         }
+        private RefreshToken CreateRefreshToken()
+        {
+            return new RefreshToken
+            {
+                Token = GetToken(),
+                ExpiresOn = DateTime.UtcNow.AddDays(10),
+                CreatedOn = DateTime.UtcNow
+            };
+        }
+
     }
 }

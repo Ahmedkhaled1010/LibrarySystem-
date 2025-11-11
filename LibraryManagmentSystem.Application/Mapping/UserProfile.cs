@@ -9,6 +9,7 @@ namespace LibraryManagmentSystem.Application.Mapping
         public UserProfile()
         {
             CreateMap<User, UserDto>().ForMember(dist => dist.Role, opt => opt.Ignore());
+
         }
     }
 }

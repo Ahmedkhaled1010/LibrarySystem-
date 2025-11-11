@@ -16,8 +16,8 @@ namespace LibraryManagmentSystem.Shared.Response
         public static ApiResponse<T> Fail(string message, List<string> errors, int statusCode = (int)HttpStatusCode.InternalServerError) =>
             new ApiResponse<T> { Success = false, Message = message, Errors = errors,StatusCode=statusCode };
 
-        public static ApiResponse<T> Ok(T data, string? message = null) =>
-        new ApiResponse<T> { Success = true, Data = data, Message = message, StatusCode = (int)HttpStatusCode.OK, };
+        public static ApiResponse<T> Ok(T data, string? message = null, int statusCode = (int)HttpStatusCode.OK) =>
+        new ApiResponse<T> { Success = true, Data = data, Message = message, StatusCode =statusCode };
 
     }
 }

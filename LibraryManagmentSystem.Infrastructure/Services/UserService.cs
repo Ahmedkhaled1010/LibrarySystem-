@@ -9,6 +9,7 @@ using LibraryManagmentSystem.Application.IClients;
 using LibraryManagmentSystem.Application.Interfaces;
 using LibraryManagmentSystem.Domain.Contracts;
 using LibraryManagmentSystem.Domain.Entity;
+using LibraryManagmentSystem.Shared.DataTransferModel.Auth;
 using LibraryManagmentSystem.Shared.DataTransferModel.UserDto;
 using LibraryManagmentSystem.Shared.Response;
 using Microsoft.AspNetCore.Identity;
@@ -171,6 +172,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                 await userManager.AddToRoleAsync(user, "User");
                 await userManager.UpdateAsync(user);
                 await transaction.CommitAsync();
+                await transaction.CommitAsync();
                 return user;
 
             }
@@ -178,5 +180,36 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                 return null;
 
         }
+
+        public async Task<AuthDto> AuthUser(User user, TokenModel token, RefreshToken refreshTokens)
+        {
+            var User = new AuthDto()
+            {
+                Email = user.Email,
+                IsAuthenticated = true,
+                Name = user.UserName,
+                Token = token.Token,
+                Roles = token.Roles,
+                IsVerified = user.IsVerified
+            };
+            if (user.RefreshTokens.Any(t => t.IsActive))
+            {
+                var refreshToken = user.RefreshTokens.FirstOrDefault(t => t.IsActive);
+                User.RefreshToken = refreshToken.Token;
+                User.RefreshTokenExpiryTime = refreshToken.ExpiresOn;
+
+
+            }
+            else
+            {
+
+                var refreshToken = refreshTokens;
+                User.RefreshToken = refreshToken.Token;
+                User.RefreshTokenExpiryTime = refreshToken.ExpiresOn;
+                user.RefreshTokens.Add(refreshToken);
+                await userManager.UpdateAsync(user);
+            }
+            return User;
         }
+    }
 }
