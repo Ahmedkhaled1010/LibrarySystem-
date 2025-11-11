@@ -9,6 +9,7 @@ using LibraryManagmentSystem.Infrastructure.Data.MongoContext;
 using LibraryManagmentSystem.Infrastructure.Data.Specifications.BooksSpecifications;
 using LibraryManagmentSystem.Shared.Response;
 using Microsoft.AspNetCore.Http;
+using System.Net;
 
 namespace LibraryManagmentSystem.Infrastructure.Services
 {
@@ -21,10 +22,16 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         public async Task<ApiResponse<string>> UploadDocumentAsync(UploadDocumentCommand command)
         {
             var book = await bookRepository.GetByIdAsync(command.bookId);
-            if (book == null || book.AuthorId != command.AuthorId)
+            if (book == null)
             {
-                return ApiResponse<string>.Fail("Book not found or you are not authorized to upload document for this book");
+                return ApiResponse<string>.Fail("Book not found", (int)HttpStatusCode.NotFound);
             }
+
+            if (book.AuthorId != command.AuthorId)
+            {
+                return ApiResponse<string>.Fail("You are not authorized to upload a document for this book", (int)HttpStatusCode.Forbidden);
+            }
+
             var fileExtension = Path.GetExtension(command.file.FileName).ToLowerInvariant();
             var fileName = $"{Guid.NewGuid()}_{command.file.FileName}";
             // رفع الملف على Supabase
@@ -46,7 +53,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             var document = await documentRepository.GetByIdAsync(docGuid);
             if (document == null)
             {
-                return ApiResponse<string>.Fail("Document Not Found");
+                return ApiResponse<string>.Fail("Document Not Found",(int) HttpStatusCode.NotFound);
             }
             return ApiResponse<string>.Ok(document.FilePath, "Document Retrieved Successfully");
         }
@@ -61,7 +68,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             var book = await bookRepository.GetByIdAsync(spec);
             if (book == null)
             {
-                return ApiResponse<string>.Fail("Book Not Found");
+                return ApiResponse<string>.Fail("Book Not Found", (int)HttpStatusCode.NotFound);
             }
             Guid? docId;
             string extension = "";
@@ -78,12 +85,12 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             }
             if (docId == null)
             {
-                return ApiResponse<string>.Fail("Document Not Found");
+                return ApiResponse<string>.Fail("Document Not Found", (int)HttpStatusCode.NotFound);
             }
             var document = await documentRepository.GetByIdAsync(docId.Value);
             if (document == null)
             {
-                return ApiResponse<string>.Fail("Document Not Found");
+                return ApiResponse<string>.Fail("Document Not Found", (int)HttpStatusCode.NotFound);
             }
             if (documentQuery.Type == "cover")
             {
@@ -92,7 +99,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             var filePath = document.FilePath;
             if (!File.Exists(filePath))
             {
-                return ApiResponse<string>.Fail("File Not Found");
+                return ApiResponse<string>.Fail("File Not Found", (int)HttpStatusCode.NotFound);
             }
             var fileBytes = await File.ReadAllBytesAsync(filePath);
             var base64String = Convert.ToBase64String(fileBytes);
