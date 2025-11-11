@@ -15,10 +15,12 @@ namespace LibraryManagmentSystem.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class BookController(IMediator mediator, IServicesManager servicesManager) : ControllerBase
     {
         [HttpPost]
-        [Authorize(Roles = "Admin,PUBLISHER")]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> CreateBook(CreateBookCommand createBook)
         {
             var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -41,12 +43,16 @@ namespace LibraryManagmentSystem.API.Controllers
             return Ok(result);
         }
         [HttpPut]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> UpdateBook(UpdateBookCommand updateBook)
         {
             var result = await mediator.Send(updateBook);
             return Ok(result);
         }
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> DeleteBook(Guid id)
         {
             var result = await mediator.Send(new DeleteBookCommand(id));

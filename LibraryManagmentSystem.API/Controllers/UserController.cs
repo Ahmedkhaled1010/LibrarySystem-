@@ -17,12 +17,15 @@ namespace LibraryManagmentSystem.API.Controllers
     public class UserController(IMediator mediator) : ControllerBase
     {
         [HttpGet]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> GetAllUser()
         {
             var res = await mediator.Send(new GetAllUserQuery());
             return Ok(res);
         }
         [HttpGet("user")]
+
         public async Task<IActionResult> GetUser()
 
         {
@@ -31,7 +34,10 @@ namespace LibraryManagmentSystem.API.Controllers
             var res = await mediator.Send(new GetUserByIdQuery(user));
             return Ok(res);
         }
+
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> DeletUser([FromQuery] DeleteUserCommand command)
         {
             var res = await mediator.Send(command);

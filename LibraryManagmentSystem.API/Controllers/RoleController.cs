@@ -7,12 +7,15 @@ using LibraryManagmentSystem.Application.Features.Roles.Queries.GetAllUserRoles;
 using LibraryManagmentSystem.Application.Features.Roles.Queries.GetRoleById;
 using LibraryManagmentSystem.Applicationr.Features.Roles.Commands.AssignRole;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryManagmentSystem.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
+
     public class RoleController(IMediator mediator) : ControllerBase
     {
         [HttpGet("get-all-roles")]

@@ -5,12 +5,14 @@ using LibraryManagmentSystem.Application.Feature.Review.Query.GetAllBookAvgRate;
 using LibraryManagmentSystem.Application.Feature.Review.Query.GetBookAvgRate;
 using LibraryManagmentSystem.Application.Feature.Review.Query.GetBookReview;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryManagmentSystem.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ReviewController(IMediator mediator) : ControllerBase
     {
         [HttpPost]
@@ -27,18 +29,24 @@ namespace LibraryManagmentSystem.API.Controllers
             return Ok(res);
         }
         [HttpGet("avgRating")]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> AverageBookRate([FromQuery] GetBookAvgRateQuery query)
         {
             var res = await mediator.Send(query);
             return Ok(res);
         }
         [HttpGet("avgRatingAll")]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> AverageAllBookRate()
         {
             var res = await mediator.Send(new GetAllBookAvgRateQuery());
             return Ok(res);
         }
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Delete([FromQuery] DeleteReviewCommand command)
         {
 
@@ -46,6 +54,7 @@ namespace LibraryManagmentSystem.API.Controllers
             return Ok(res);
         }
         [HttpPut]
+
         public async Task<IActionResult> Update(UpdateReviewCommand command)
         {
 

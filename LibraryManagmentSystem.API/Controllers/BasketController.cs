@@ -1,5 +1,6 @@
 ﻿using LibraryManagmentSystem.Application.Interfaces;
 using LibraryManagmentSystem.Shared.Model.BasketModule;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -7,6 +8,7 @@ namespace LibraryManagmentSystem.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class BasketController(IServicesManager servicesManager) : ControllerBase
     {
 

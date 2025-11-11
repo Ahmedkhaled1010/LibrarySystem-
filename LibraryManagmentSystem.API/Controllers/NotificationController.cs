@@ -1,13 +1,17 @@
 ﻿using LibraryManagmentSystem.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryManagmentSystem.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class NotificationController(IServicesManager servicesManager) : ControllerBase
     {
         [HttpGet("admin")]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> GetAllNotificationAdmin()
         {
             var res = await servicesManager.notificationClient.GetAllNotificationAdmins();

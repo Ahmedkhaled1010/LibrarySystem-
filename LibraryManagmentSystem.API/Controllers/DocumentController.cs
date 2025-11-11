@@ -9,10 +9,11 @@ namespace LibraryManagmentSystem.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
+
     public class DocumentController(IMediator mediator) : ControllerBase
     {
         [HttpPost("upload-image/{bookId}")]
-        [Authorize(Roles = "Admin,PUBLISHER")]
         public async Task<IActionResult> UploadCoverImage([FromForm] IFormFile file, Guid bookId)
         {
             var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -28,7 +29,6 @@ namespace LibraryManagmentSystem.API.Controllers
             return Ok(result);
         }
         [HttpPost("upload-pdf/{bookId}")]
-        [Authorize(Roles = "Admin,PUBLISHER")]
 
         public async Task<IActionResult> UploadPdf([FromForm] IFormFile file, Guid bookId)
         {
