@@ -172,12 +172,15 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                 await userManager.AddToRoleAsync(user, "User");
                 await userManager.UpdateAsync(user);
                 await transaction.CommitAsync();
-                await transaction.CommitAsync();
                 return user;
 
             }
             else
+            {
+                await transaction.RollbackAsync();
                 return null;
+            }
+           
 
         }
 
