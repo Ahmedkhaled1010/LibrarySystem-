@@ -1,3 +1,4 @@
+using LibraryManagmentSystem.Domain.Enum.BorrowRecord;
 using LibraryManagmentSystem.Domain.Enum.Reservations;
 using LibraryManagmentSystem.Infrastructure.Data.Context;
 using MassTransit;
@@ -31,11 +32,12 @@ namespace BackgroundServices
 
                     await NotifyUpcomingReturns(dbContext);
                     await NotifyAvailableBooks(dbContext);
+                    await UpdateNotReturnStatus(dbContext);
                     _logger.LogInformation("Worker running at: {time}",
                         DateTimeOffset.Now);
                 }
 
-                //   await Task.Delay(1000, stoppingToken);
+                //  await Task.Delay(1000, stoppingToken);
                 await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
 
             }
@@ -78,6 +80,21 @@ namespace BackgroundServices
 
                 };
                 await bus.Publish(notify);
+            }
+        }
+        private async Task UpdateNotReturnStatus(LibraryDbContext dbContext)
+        {
+            var upcomingReturns = await dbContext.borrowRecords
+                .Include(b => b.User)
+                .Include(b => b.Book)
+                .Where(b => b.ActualReturnDate.HasValue &&
+                            b.ActualReturnDate.Value.Date <= DateTime.UtcNow.Date && b.ReturnDate == null && b.Status == BorrowRecordStatus.active.ToString())
+                .ToListAsync();
+
+            foreach (var record in upcomingReturns)
+            {
+                record.Status = BorrowRecordStatus.overdue.ToString();
+                await dbContext.SaveChangesAsync();
             }
         }
     }

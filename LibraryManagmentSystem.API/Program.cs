@@ -6,6 +6,7 @@ using LibraryManagmentSystem.Application;
 using LibraryManagmentSystem.Infrastructure;
 using LibraryManagmentSystem.Shared.Helper;
 using MassTransit;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace LibraryManagmentSystem.API
 {
@@ -63,16 +64,21 @@ namespace LibraryManagmentSystem.API
                 app.UseSwagger();
                 app.UseSwaggerUI(options =>
                 {
+                    options.DocExpansion(DocExpansion.None);
+
                     options.EnableFilter();
                     options.EnablePersistAuthorization();
                 });
             }
 
             app.UseHttpsRedirection();
+            app.UseCors("AllowALL");
+
+            app.UseAuthentication();
+
 
             app.UseAuthorization();
 
-            app.UseCors("AllowALL");
 
             app.MapControllers();
 

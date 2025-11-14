@@ -7,12 +7,10 @@ using LibraryManagmentSystem.Application.Interfaces;
 using LibraryManagmentSystem.Domain.Contracts;
 using LibraryManagmentSystem.Domain.Entity;
 using LibraryManagmentSystem.Infrastructure.Data.Specifications.BooksSpecifications;
-using LibraryManagmentSystem.Shared.DataTransferModel.Books;
 using LibraryManagmentSystem.Shared.DataTransferModel.Borrow;
 using LibraryManagmentSystem.Shared.Response;
 using MassTransit;
 using Microsoft.AspNetCore.Identity;
-using SharedEventsServices.Events;
 using System.Net;
 
 namespace LibraryManagmentSystem.Infrastructure.Services
@@ -51,7 +49,8 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                 return ApiResponse<string>.Ok($"Book {book.Title} .", $"Book {book.Title} borrow request submitted successfully.");
 
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
 
                 return ApiResponse<string>.Fail($"Error: {ex.InnerException?.Message ?? ex.Message}");
 
@@ -72,7 +71,8 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                 }
                 return ApiResponse<string>.Ok($"Request {command.RequestId} Rejected", $"Your request to borrow the book {command.BookTitle} has been rejected.");
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
 
                 return ApiResponse<string>.Fail($"Error: {ex.InnerException?.Message ?? ex.Message}");
 
@@ -90,7 +90,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
 
                     var user = await userManager.FindByIdAsync(UserId);
                     var checkUser = await servicesManager.UserService.ValidateUserForBorrowing(UserId);
-                    if (checkUser is not null)
+                    if (checkUser.Success == false)
                     {
                         return checkUser;
                     }
@@ -103,8 +103,8 @@ namespace LibraryManagmentSystem.Infrastructure.Services
 
                     }
                     servicesManager.BookServices.UpdateAvailabilityAsync(book, false);
-                 
-                  
+
+
                     await servicesManager.borrowRecordService.CreateBorrowRecordAsync(book, UserId);
                     await servicesManager.UserService.UpdateBorrowLimitAsync(user, -1);
                     servicesManager.BookServices.UpdateTotalBorrow(book);
@@ -115,7 +115,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                     {
                         Message = $"Book {book.Title} borrowed successfully.",
                         Data = $"Book {book.Title} .",
-                        StatusCode=(int)HttpStatusCode.OK,
+                        StatusCode = (int)HttpStatusCode.OK,
                     };
 
                 }
@@ -156,11 +156,11 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                     await servicesManager.UserService.UpdateBorrowLimitAsync(userId, 1);
                     await unitOfWork.SaveChangesAsync();
                     await servicesManager.publishEventServices.ReturnBook(userId.UserName, book.Title);
-                  
+
                     if (overdueDays > 0)
                     {
-                        await servicesManager.publishEventServices.FineAdded(bookCommand.UserId, overdueDays*2, $"Late return of book {book.Title} by {overdueDays} days.", Borrow.Book.Title);
-                       
+                        await servicesManager.publishEventServices.FineAdded(bookCommand.UserId, overdueDays * 2, $"Late return of book {book.Title} by {overdueDays} days.", Borrow.Book.Title);
+
                     }
                     await transaction.CommitAsync();
                     var returnMessage = overdueDays > 0 ? $"Book {book.Title} returned successfully.And You Have A fine , Because You are late {overdueDays} Days for your return."
@@ -169,7 +169,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                     {
                         Message = $"Book {book.Title} returned successfully.",
                         Data = returnMessage,
-                        StatusCode=(int)HttpStatusCode.OK,
+                        StatusCode = (int)HttpStatusCode.OK,
                     };
                 }
                 catch (Exception ex)
@@ -186,7 +186,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             var borrowRecords = await borrowRepository.GetBorrowRecordsByMemberAsync(user.UserId);
             if (borrowRecords is null)
             {
-                return ApiResponse<IEnumerable<BorrowRecordDto>>.Fail("No borrow records found for this user.",(int)HttpStatusCode.NoContent);
+                return ApiResponse<IEnumerable<BorrowRecordDto>>.Fail("No borrow records found for this user.", (int)HttpStatusCode.NoContent);
 
             }
             var mappedBorrowRecords = mapper.Map<IEnumerable<BorrowRecordDto>>(borrowRecords);

@@ -10,5 +10,6 @@ namespace LibraryManagmentSystem.Application.Interfaces
         Task PayFine(string userId, string fineId);
         Task<ApiResponse<IEnumerable<PaymentDto>>> GetPaymentList();
         Task<decimal> GetTotalPayment();
+        Task SuccessPayFine(string fineId);
     }
 }

@@ -1,5 +1,4 @@
-﻿using DnsClient.Internal;
-using LibraryManagmentSystem.Application.Feature.Auth.Login;
+﻿using LibraryManagmentSystem.Application.Feature.Auth.Login;
 using LibraryManagmentSystem.Application.Feature.Auth.Register;
 using LibraryManagmentSystem.Application.Feature.Auth.ResetPassword;
 using LibraryManagmentSystem.Application.Interfaces;
@@ -9,12 +8,10 @@ using LibraryManagmentSystem.Shared.DataTransferModel.Auth;
 using LibraryManagmentSystem.Shared.Helper;
 using LibraryManagmentSystem.Shared.Response;
 using MassTransit;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using SharedEventsServices.Events;
 using System.Net;
 using System.Security.Cryptography;
 
@@ -26,14 +23,14 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         IBus bus,
         IOptions<AppSettings> options,
         IUnitOfWork unitOfWork,
-        ILogger<AuthServices> logger      ,
+        ILogger<AuthServices> logger,
         IServicesManager servicesManager) : IAuthServices
     {
         private readonly string baseUrl = options.Value.BaseUrl;
 
         public async Task<ApiResponse<RegisterResponse>> RegisterAsync(RegisterCommand registerDto)
         {
-            
+
             var error = await userValidation.ValidateUserRegistrationAsync(registerDto);
             if (error != null)
             {
@@ -48,7 +45,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             {
                 var user = await servicesManager.UserService.CreateUserAsync(registerDto, GetToken());
 
-               
+
 
 
                 if (user != null)
@@ -73,13 +70,14 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                 }
                 else
                 {
-                      return ApiResponse<RegisterResponse>.Fail("Error To Register" ,(int)HttpStatusCode.BadRequest);
+                    return ApiResponse<RegisterResponse>.Fail("Error To Register", (int)HttpStatusCode.BadRequest);
 
                 }
-               
+
 
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 return ApiResponse<RegisterResponse>.Fail(ex.Message);
             }
         }
@@ -87,7 +85,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         public async Task<ApiResponse<AuthDto>> LoginAsync(LoginCommand loginDto)
         {
 
-           try
+            try
             {
                 var user = await userManager.FindByEmailAsync(loginDto.Email);
                 var check = await userValidation.ValidateUserLoginAsync(user, loginDto.Password);
@@ -112,7 +110,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
 
                 };
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return ApiResponse<AuthDto>.Fail("An error occurred during login: " + ex.Message, (int)HttpStatusCode.InternalServerError);
 
@@ -127,7 +125,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             var user = await userManager.Users.SingleOrDefaultAsync(u => u.RefreshTokens.Any(t => t.Token == token));
             if (user is null)
             {
-                return ApiResponse<AuthDto>.Fail("User Not Found",(int)HttpStatusCode.NotFound);
+                return ApiResponse<AuthDto>.Fail("User Not Found", (int)HttpStatusCode.NotFound);
             }
 
             var refreshToken = user.RefreshTokens.Single(t => t.Token == token);
@@ -158,7 +156,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             var user = await userManager.FindByEmailAsync(email);
             if (user == null)
             {
-                return ApiResponse<bool>.Fail("User not found",(int)HttpStatusCode.NotFound);
+                return ApiResponse<bool>.Fail("User not found", (int)HttpStatusCode.NotFound);
             }
             var otpCode = new Random().Next(100000, 999999).ToString();
 
@@ -166,7 +164,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             user.resetPasswordTokenExpires = DateTime.UtcNow.AddMinutes(30);
 
             await servicesManager.publishEventServices.SendEmail(user.Email, "Reset Password Code", $"Your password reset code is: {otpCode}\nThis code will expire in 30 minutes.");
-           
+
             await userManager.UpdateAsync(user);
 
             return ApiResponse<bool>.Ok(true, "Reset Password Email Sent");
@@ -176,7 +174,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             var user = await userManager.Users.SingleOrDefaultAsync(u => u.resetPasswordToken == command.Code && u.resetPasswordTokenExpires > DateTime.UtcNow);
             if (user == null)
             {
-                return ApiResponse<bool>.Fail("Invalid or Expired Token",(int)HttpStatusCode.Unauthorized);
+                return ApiResponse<bool>.Fail("Invalid or Expired Token", (int)HttpStatusCode.Unauthorized);
             }
             var resetUser = user;
             resetUser.resetPasswordToken = null;
@@ -207,7 +205,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             refreshToken.RevokedOn = DateTime.UtcNow;
 
             await userManager.UpdateAsync(user);
-            return ApiResponse<bool>.Ok(true, "",, (int)HttpStatusCode.Unauthorized);
+            return ApiResponse<bool>.Ok(true, "", (int)HttpStatusCode.Unauthorized);
         }
 
         public async Task<ApiResponse<bool>> VerifyEmailAsync(string token)
@@ -215,7 +213,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             var user = await userManager.Users.SingleOrDefaultAsync(u => u.verificationToken == token);
             if (user is null)
             {
-                return ApiResponse<bool>.Fail("Invalid Token",(int)HttpStatusCode.Unauthorized);
+                return ApiResponse<bool>.Fail("Invalid Token", (int)HttpStatusCode.Unauthorized);
             }
             user.IsVerified = true;
             user.verificationToken = null;

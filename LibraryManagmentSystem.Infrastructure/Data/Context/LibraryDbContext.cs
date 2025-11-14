@@ -28,6 +28,22 @@ namespace LibraryManagmentSystem.Infrastructure.Data.Context
         public DbSet<OrderBook> orderBooks { get; set; }
         public DbSet<Reservation> reservations { get; set; }
         public DbSet<BookPurchase> bookPurchases { get; set; }
+        //public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        //{
+        //    foreach (var entry in base.ChangeTracker.Entries<BaseEntity>()
+        //        .Where(q => q.State == EntityState.Added || q.State == EntityState.Modified))
+        //    {
+        //        entry.Entity.DateModified = DateTime.Now;
+        //        entry.Entity.ModifiedBy = _userService.UserId;
+        //        if (entry.State == EntityState.Added)
+        //        {
+        //            entry.Entity.DateCreated = DateTime.Now;
+        //            entry.Entity.CreatedBy = _userService.UserId;
+        //        }
+        //    }
+
+        //    return base.SaveChangesAsync(cancellationToken);
+        //}
 
     }
 }

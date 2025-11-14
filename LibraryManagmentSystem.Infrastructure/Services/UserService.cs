@@ -19,8 +19,9 @@ using System.Net;
 namespace LibraryManagmentSystem.Infrastructure.Services
 {
     public class UserService(UserManager<User> userManager, IMapper mapper,
-         ISupabaseClient supabase,IUnitOfWork unitOfWork) : IUserService
+         ISupabaseClient supabase, IUnitOfWork unitOfWork) : IUserService
     {
+
         public async Task<ApiResponse<IEnumerable<UserDto>>> GetAllUser()
         {
 
@@ -61,7 +62,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
 
             if (user == null)
             {
-                return ApiResponse<string>.Fail("User not found",(int)HttpStatusCode.NotFound);
+                return ApiResponse<string>.Fail("User not found", (int)HttpStatusCode.NotFound);
             }
             if (user.fines > 0)
             {
@@ -156,7 +157,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             return mapper.Map<UserDto>(user);
         }
 
-        public async Task<User> CreateUserAsync(RegisterCommand registerDto,string token)
+        public async Task<User> CreateUserAsync(RegisterCommand registerDto, string token)
         {
             User user = new User
             {
@@ -181,7 +182,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                 await transaction.RollbackAsync();
                 return null;
             }
-           
+
 
         }
 

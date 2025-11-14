@@ -26,23 +26,23 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             try
             {
                 var existingBook = await bookRepository.GetByIdAsync(new BookNameSpecification(createBookCommand.Title));
-            if (existingBook != null)
-            {
-                return ApiResponse<BookDto>.Fail("Book with the same title already exists",(int)HttpStatusCode.Conflict);
-            }
-            var category = (await categoryRepository.GetAllAsync()).
-                FirstOrDefault(c => c.Name.ToLower() == createBookCommand.CategoryName.ToLower());
-            category = await CheckCategory(createBookCommand, category);
+                if (existingBook != null)
+                {
+                    return ApiResponse<BookDto>.Fail("Book with the same title already exists", (int)HttpStatusCode.Conflict);
+                }
+                var category = (await categoryRepository.GetAllAsync()).
+                    FirstOrDefault(c => c.Name.ToLower() == createBookCommand.CategoryName.ToLower());
+                category = await CheckCategory(createBookCommand, category);
 
-            var book = mapper.Map<Book>(createBookCommand);
-            book.CategoryId = category.Id;
+                var book = mapper.Map<Book>(createBookCommand);
+                book.CategoryId = category.Id;
 
-         
+
                 await bookRepository.AddAsync(book);
                 await unitOfWork.SaveChangesAsync();
                 var bookDto = mapper.Map<BookDto>(book);
-               await  transaction.CommitAsync();
-                return ApiResponse<BookDto>.Ok(bookDto, $"Book {book.Title} Created Successfuly",(int)HttpStatusCode.Created);
+                await transaction.CommitAsync();
+                return ApiResponse<BookDto>.Ok(bookDto, $"Book {book.Title} Created Successfuly", (int)HttpStatusCode.Created);
             }
             catch (Exception ex)
             {
@@ -51,7 +51,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                 return ApiResponse<BookDto>.Fail($"Error: {ex.InnerException?.Message ?? ex.Message}");
 
             }
-           
+
         }
 
         public async Task<PagedApiResponse<BookDto>> GetAllBooksAsync(GetAllBookQuery bookQuery)
@@ -71,14 +71,15 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                 var books = await bookRepository.GetAllAsync(specification);
                 if (books is null)
                 {
-                    return PagedApiResponse<BookDto>.Ok([], pagination, "No books found", (int)HttpStatusCode.NoContent);
+                    return PagedApiResponse<BookDto>.Fail("No books found", (int)HttpStatusCode.NoContent);
 
                 }
                 var bookDtos = mapper.Map<List<BookDto>>(books);
 
                 return PagedApiResponse<BookDto>.Ok(bookDtos, pagination, "Books retrieved successfully");
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 return PagedApiResponse<BookDto>.Fail($"Error: {ex.InnerException?.Message ?? ex.Message}");
 
             }
@@ -97,7 +98,8 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                 var bookDto = mapper.Map<BookDto>(book);
                 return ApiResponse<BookDto>.Ok(bookDto, "Book retrieved successfully");
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 return ApiResponse<BookDto>.Fail($"Error: {ex.InnerException?.Message ?? ex.Message}");
 
             }
@@ -158,8 +160,8 @@ namespace LibraryManagmentSystem.Infrastructure.Services
 
             return book;
         }
-      
-       
+
+
 
         public void UpdateTotalBorrow(Book book)
         {
@@ -207,7 +209,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                 try
                 {
                     await categoryRepository.AddAsync(category);
-               
+
                     await unitOfWork.SaveChangesAsync();
                 }
                 catch (Exception ex)

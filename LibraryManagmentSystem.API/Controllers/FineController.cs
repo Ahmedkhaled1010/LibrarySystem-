@@ -18,5 +18,13 @@ namespace LibraryManagmentSystem.API.Controllers
             return Ok(res);
 
         }
+        [HttpGet("pay/{userId}")]
+        public async Task<IActionResult> PayFine(string userId)
+        {
+
+            await servicesManager.paymentServices.SuccessPayFine(userId);
+            return Ok();
+
+        }
     }
 }

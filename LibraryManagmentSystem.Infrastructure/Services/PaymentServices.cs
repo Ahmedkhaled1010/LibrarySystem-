@@ -66,5 +66,11 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             };
             await bus.Publish(fine);
         }
+        public async Task SuccessPayFine(string fineId)
+        {
+            var url = $"https://localhost:7207/api/Fine/pay-fine/{fineId}";
+            var response = await httpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+        }
     }
 }

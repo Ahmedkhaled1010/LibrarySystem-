@@ -2,11 +2,7 @@
 using LibraryManagmentSystem.Application.Interfaces;
 using LibraryManagmentSystem.Domain.Entity;
 using MassTransit;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SharedEventsServices.Events;
 
 namespace LibraryManagmentSystem.Infrastructure.Services
 {
@@ -38,7 +34,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
                 RequsetId = command.RequestId,
 
             };
-          await  bus.Publish<BookBorrowStatusChangedEvent>(response);
+            await bus.Publish<BookBorrowStatusChangedEvent>(response);
         }
 
         public async Task FineAdded(string userId, decimal amount, string reaseon, string bookTitle)

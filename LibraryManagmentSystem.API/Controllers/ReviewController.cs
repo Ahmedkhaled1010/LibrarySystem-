@@ -29,7 +29,6 @@ namespace LibraryManagmentSystem.API.Controllers
             return Ok(res);
         }
         [HttpGet("avgRating")]
-        [Authorize(Roles = "Admin")]
 
         public async Task<IActionResult> AverageBookRate([FromQuery] GetBookAvgRateQuery query)
         {
@@ -37,7 +36,6 @@ namespace LibraryManagmentSystem.API.Controllers
             return Ok(res);
         }
         [HttpGet("avgRatingAll")]
-        [Authorize(Roles = "Admin")]
 
         public async Task<IActionResult> AverageAllBookRate()
         {
