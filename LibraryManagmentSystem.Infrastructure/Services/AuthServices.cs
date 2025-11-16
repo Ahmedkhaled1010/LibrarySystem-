@@ -1,4 +1,6 @@
-﻿using LibraryManagmentSystem.Application.Feature.Auth.Login;
+﻿using Google.Apis.Auth;
+using LibraryManagmentSystem.Application.Feature.Auth.Login;
+using LibraryManagmentSystem.Application.Feature.Auth.LoginWithGoogle;
 using LibraryManagmentSystem.Application.Feature.Auth.Register;
 using LibraryManagmentSystem.Application.Feature.Auth.ResetPassword;
 using LibraryManagmentSystem.Application.Interfaces;
@@ -243,5 +245,35 @@ namespace LibraryManagmentSystem.Infrastructure.Services
             };
         }
 
+        public async Task<ApiResponse<bool>> GoogleSignInAsync(LoginWithGoogleCommand command)
+        {
+            GoogleJsonWebSignature.Payload payload;
+            try
+            {
+                payload = await GoogleJsonWebSignature.ValidateAsync(command.token);
+
+            }
+            catch
+            {
+                return ApiResponse<bool>.Fail("Invalid Google Token");
+            }
+            var email = payload.Email;
+            var name = payload.Name;
+            var user = await userManager.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null)
+            {
+                user = new User
+                {
+                    Email = email,
+                    Name = name,
+                };
+
+                userManager.CreateAsync(user);
+                return ApiResponse<bool>.Ok(true);
+            }
+
+            return ApiResponse<bool>.Fail("Email already exists");
+
+        }
     }
 }

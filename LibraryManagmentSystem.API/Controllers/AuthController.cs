@@ -1,4 +1,5 @@
 ﻿using LibraryManagmentSystem.Application.Feature.Auth.Login;
+using LibraryManagmentSystem.Application.Feature.Auth.LoginWithGoogle;
 using LibraryManagmentSystem.Application.Feature.Auth.Register;
 using LibraryManagmentSystem.Application.Feature.Auth.ResetPassword;
 using LibraryManagmentSystem.Application.Interfaces;
@@ -20,6 +21,12 @@ namespace LibraryManagmentSystem.API.Controllers
             {
                 SetRefreshTokenInCookie(result.Data.RefreshToken!, result.Data.RefreshTokenExpiryTime);
             }
+            return Ok(result);
+        }
+        [HttpPost("google-signin")]
+        public async Task<IActionResult> GoogleSignIn([FromBody] LoginWithGoogleCommand dto)
+        {
+            var result = await mediator.Send(dto);
             return Ok(result);
         }
         [HttpPost("register")]

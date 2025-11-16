@@ -45,6 +45,7 @@ namespace LibraryManagmentSystem.Infrastructure.Services
         public async Task<ApiResponse<IEnumerable<PaymentDto>>> GetPaymentList()
         {
             var res = await httpClient.GetFromJsonAsync<IEnumerable<PaymentDto>>($"https://localhost:7207/api/Fine/admin");
+          
             return ApiResponse<IEnumerable<PaymentDto>>.Ok(res);
         }
 

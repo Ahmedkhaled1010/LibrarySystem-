@@ -1,4 +1,5 @@
 ﻿using LibraryManagmentSystem.Application.Feature.Auth.Login;
+using LibraryManagmentSystem.Application.Feature.Auth.LoginWithGoogle;
 using LibraryManagmentSystem.Application.Feature.Auth.Register;
 using LibraryManagmentSystem.Application.Feature.Auth.ResetPassword;
 using LibraryManagmentSystem.Shared.DataTransferModel.Auth;
@@ -16,6 +17,7 @@ namespace LibraryManagmentSystem.Application.Interfaces
         Task<ApiResponse<bool>> VerifyEmailAsync(string token);
         Task<ApiResponse<bool>> ForgetPasswordAsync(string token);
         Task<ApiResponse<bool>> ResetPasswordAsync(ResetPasswordCommand command);
+        Task<ApiResponse<bool>> GoogleSignInAsync(LoginWithGoogleCommand command);
 
 
     }
